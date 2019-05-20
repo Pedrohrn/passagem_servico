@@ -1,0 +1,11 @@
+angular.module('scApp').lazy
+.factory 'Templates', ->
+	obj =
+		passagem_servicos:
+			top_bar_content: "<%= asset_path('passagem_servicos/top_bar_content.html') %>"
+			show: "<%= asset_path('passagem_servicos/show.html') %>"
+			form: "<%= asset_path('passagem_servicos/form.html') %>"
+			perfil_modal: "<%= asset_path('passagem_servicos/perfil_modal.html') %>"
+			perfil_form: "<%= asset_path('passagem_servicos/perfil_form.html') %>"
+			passar_servico_modal: "<%= asset_path('passagem_servicos/passar_servico_modal.html') %>"
+	obj

@@ -1,0 +1,132 @@
+<div class="" sc-modal="indexCtrl.perfilCtrl.modal">
+
+	<div class="sc-modal-header col-xs-12" style="min-height: 3.1em;">
+		<div class="sc-text-lg align-self-center">
+			<div ng-if="indexCtrl.perfilCtrl.viewPerfis && !indexCtrl.perfilCtrl.viewCategorias" class="col-xs-4">Perfis de passagem</div>
+			<div ng-if="indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPerfis" class="col-xs-2 sc-m-r-xxl">Categorias</div>
+		</div>
+		<button ng-if="!indexCtrl.perfilCtrl.viewPermissoes" class="sc-btn sc-btn-green sc-btn-sm sc-btn-thin">
+			<span ng-if="indexCtrl.perfilCtrl.viewPerfis && !indexCtrl.perfilCtrl.viewCategorias" ng-click="indexCtrl.perfilCtrl.novoPerfil()">Novo Perfil</span>
+			<span ng-if="indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPerfis" ng-click="indexCtrl.perfilCtrl.newCategoria()">Nova Categoria</span>
+		</button>
+		<i class="sc-modal-close sc-badge-hover-red sc-icon-fechar-1 sc-cursor-pointer" ng-click=indexCtrl.perfilCtrl.modal.close()></i>
+	</div>
+
+	<div class="sc-modal-body">
+		<div class="sc-btn-group sc-m-l-xxxl" style="z-index: 150;">
+			<button class="sc-btn sc-btn-default" ng-click="indexCtrl.perfilCtrl.showPerfis()" ng-class="{'sc-btn-blue': indexCtrl.perfilCtrl.viewPerfis && !indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPermissoes}">Perfis</button>
+			<button class="sc-btn sc-btn-default" ng-click="indexCtrl.perfilCtrl.showCategorias()" ng-class="{'sc-btn-blue': !indexCtrl.perfilCtrl.viewPerfis && indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPermissoes}">Categorias</button>
+			<button class="sc-btn sc-btn-default" ng-click="indexCtrl.perfilCtrl.showPermissoes()" ng-class="{'sc-btn-blue': indexCtrl.perfilCtrl.viewPermissoes && !indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPerfis}">Permissões</button>
+		</div>
+		<div class="sc-fieldset" style="position: relative; top: -0.6em; z-index: 100;">
+			<ul ng-if="indexCtrl.perfilCtrl.viewPerfis && !indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.viewPermissoes" ng-class="{'sc-accordion': indexCtrl.perfilCtrl.list.length > 0}">
+				<li ng-if="indexCtrl.perfilCtrl.newPerfil">
+					<div ng-include="indexCtrl.templates.passagem_servicos.perfil_form" scope="" onload=""></div>
+				</li>
+				<li ng-if="indexCtrl.perfilCtrl.list.length <= 0">
+					<div class="flex-row">
+						<div class="fcol-xs-auto sc-label align-center">
+							<i class="sc-icon sc-icon-exclamacao-1"></i>
+							<span>Nenhum perfil cadastrado!</span>
+						</div>
+					</div>
+				</li>
+				<li ng-repeat="perfil in indexCtrl.perfilCtrl.list track by $index" ng-init="indexCtrl.perfilCtrl.init(perfil)">
+					<div class="flex-row sc-p-xs sc-accordion-head">
+						<div class="sc-text-bold sc-text-gray-dark">{{perfil.nome}}</div>
+						<div ng-if="perfil.disabled">
+							<span class="sc-border-radius sc-text-sm sc-p-v-sm sc-text-white sc-p-h-lg sc-bg-yellow">Desativado!</span>
+						</div>
+						<div class="fcol-xs-auto"></div>
+						<div class="right align-self-center">
+							<div class="sc-dropdown" ng-click="indexCtrl.perfilCtrl.showMenu(perfil)">
+								<i class="sc-icon sc-icon-reticiencias-v sc-badge-hover-gray"></i>
+								<div ng-show="perfil.menuIsShow" class="sc-dropdown-menu pull-right" style="display: block;">
+									<ul>
+										<li ng-click="indexCtrl.perfilCtrl.editar(perfil)">
+											<span>Editar</span>
+										</li>
+										<li ng-click="indexCtrl.perfilCtrl.duplicar(perfil)">
+											<span>Duplicar</span>
+										</li>
+										<li ng-click="indexCtrl.perfilCtrl.disable(perfil)">
+											<span ng-if="perfil.disabled">Reativar</span>
+											<span ng-if="!perfil.disabled">Desativar</span>
+										</li>
+										<li ng-click="indexCtrl.perfilCtrl.rmv(perfil)">
+											<span>Excluir</span>
+										</li>
+									</ul>
+								</div>
+						</div>
+					</div>
+					<div ng-if="perfil.edit.opened" class="sc-p-o clear"></div>
+					<div class="fcol-xs-100 sc-p-t-none" ng-include="indexCtrl.templates.passagem_servicos.perfil_form" ng-if="perfil.edit.opened"></div>
+				</li>
+			</ul>
+			<ul ng-if="!indexCtrl.perfilCtrl.viewPerfis && indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPermissoes" ng-class="{'sc-accordion': indexCtrl.categoriasCtrl.list.length > 0}">
+				<li ng-if="indexCtrl.categoriasCtrl.list.length <= 0">
+					<div class="flex-row">
+						<div class="fcol-xs-auto sc-label align-center">
+							<i class="sc-icon sc-icon-exclamacao-1"></i>
+							<span>Nenhuma categoria cadastrada!</span>
+						</div>
+					</div>
+				</li>
+				<li ng-repeat="categoria in indexCtrl.categoriasCtrl.list track by $index">
+					<div class="flex-row sc-p-xs sc-accordion-head">
+						<div ng-if="!categoria.edit" class="sc-text-bold sc-text-gray-dark">{{categoria.label}}</div>
+						<div class="sc-input-group sc-text-sm fcol-xs-50" ng-if="categoria.edit">
+							<input class="sc-input-default sc-text-lg" ng-model="indexCtrl.categoriasCtrl.novaCategoria">
+							<button class="sc-btn sc-btn-green sc-text-lg" ng-click="indexCtrl.categoriasCtrl.salvar(categoria)"><i class="sc-icon sc-icon-visto-1"></i></button>
+							<button class="sc-btn sc-btn-red sc-text-lg" ng-click="indexCtrl.categoriasCtrl.editar(categoria)"><i class="sc-icon sc-icon-fechar-1"></i></button>
+						</div>
+						<div ng-if="categoria.disabled && !categoria.edit">
+							<span class="sc-border-radius sc-text-sm sc-p-v-xs sc-text-white sc-m-h-lg sc-p-h-lg sc-bg-yellow">Desativada!</span>
+						</div>
+						<div class="fcol-xs-auto"></div>
+						<div class="right align-self-center">
+							<div class="sc-dropdown">
+								<i class="sc-icon sc-icon-reticiencias-v sc-badge-hover-gray" ng-class="{'sc-badge-active': categoria.menu.opened}" ng-click="indexCtrl.categoriasCtrl.showMenu(categoria)"></i>
+								<div class="sc-dropdown-menu pull-right" ng-if="categoria.menuIsShown" style="display: block;">
+									<ul>
+										<li ng-click="indexCtrl.categoriasCtrl.editar(categoria)">
+											<span>Editar</span>
+										</li>
+										<li ng-click="indexCtrl.categoriasCtrl.desativar(categoria)">
+											<span ng-if="categoria.disabled">Reativar</span>
+											<span ng-if="!categoria.disabled">Desativar</span>
+										</li>
+										<li ng-click="indexCtrl.categoriasCtrl.rmv(categoria)">
+											<span>Excluir</span>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul ng-if="indexCtrl.perfilCtrl.viewPermissoes && !indexCtrl.perfilCtrl.viewCategorias && ! indexCtrl.perfilCtrl.viewPerfis" class="sc-accordion">
+				<li ng-repeat="permissao in indexCtrl.permissoesCtrl.list track by $index">
+					<div class="sc-accordion-head">
+						<div class="sc-label col-xs-6 sc-text-gray-dark">{{permissao.label}}</div>
+						<div class="col-xs-6 align-right">
+							<label>
+								<span class="sc-toggle">
+									<input type="checkbox" ng-model="permissao.value"/>
+									<span label-true="Sim" label-false="Não"></span>
+								</span>
+							</label>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="sc-modal-footer">
+		<button class="align-right sc-btn sc-btn-default" ng-click="indexCtrl.perfilCtrl.close()">Fechar</button>
+	</div>
+
+</div>

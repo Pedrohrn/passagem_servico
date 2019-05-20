@@ -1,0 +1,128 @@
+<div ng-controller="PassagemServicos::FormCtrl as formCtrl" ng-init="formCtrl.formCtrl.init()">
+	<form class="sc-m-h-md sc-p-t-sm">
+		<div class="sc-fieldset flex-row">
+			<div class="col-xs-12 col-md-6 sc-p-h-xs">
+				<div class="col-xs-10 col-md-7 col-sm-6 sc-p-b-sm">
+					<div class="s sc-label">Quem sai:</div>
+					<div>
+						<select class="col-xs-12 sc-input-default" ng-options="porteiro as porteiro.nome disable when 'porteiro.id == formCtrl.params.pessoa_entrou.id' for porteiro in porteirosCtrl.list track by porteiro.id" ng-model="formCtrl.params.pessoa_saiu"></select>
+					</div>
+				</div>
+				<div class="col-xs-5 col-md-4 col-lg-4 col-sm-5">
+					<div class="sc-label">Senha:</div>
+					<div>
+						<input class="sc-input-default" type="password">
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-md-6 sc-p-h-xs">
+				<div class="col-xs-10 col-md-7 col-sm-6 sc-p-b-sm">
+					<div class="sc-label">Quem entra:</div>
+					<div>
+						<select class="col-xs-12 sc-input-default" ng-options="porteiro as porteiro.nome disable when 'porteiro.id == formCtrl.params.pessoa_saiu.id' for porteiro in porteirosCtrl.list track by porteiro.id" ng-model="formCtrl.params.pessoa_entrou"></select>
+					</div>
+				</div>
+				<div class="col-xs-5 col-md-4 col-lg-4 col-sm-5">
+					<div class="sc-label">Senha:</div>
+					<div>
+						<input type="password" class="sc-input-default">
+					</div>
+				</div>
+			</div>
+
+			<div class="col-xs-12 sc-p-lg" ng-if="formCtrl.params.pessoa_entrou || formCtrl.params.pessoa_saiu">
+				<div class="sc-text-black">
+					<span>Eu, <b>{{formCtrl.params.pessoa_saiu.nome}}</b>, passo o posto de serviço para o(a) <b>{{formCtrl.params.pessoa_entrou.nome}}</b>, de acordo com as informações abaixo:</span>
+				</div>
+			</div>
+
+			<div class="col-xs-12 sc-p-lg">
+				<div class="sc-label">Perfil:</div>
+				<div>
+					<select class="sc-input-default col-xs-6 col-md-4" ng-options="perfil as perfil.nome disable when perfil.disabled for perfil in indexCtrl.perfilCtrl.list track by perfil.id" ng-change="formCtrl.formCtrl.setPerfil()" ng-model="formCtrl.formCtrl.current_perfil" style="max-width: 25em;"></select>
+				</div>
+			</div>
+		</div>
+		<div class="clear"></div>
+		<div class="sc-fieldset">
+			<div class="sc-fieldset-head flex-row">
+				<div class="sc-text-xl sc-label">Objetos</div>
+				<button class="sc-btn align-self-center sc-btn-green sc-btn-thin sc-btn-sm hidden-xs sc-m-h-lg" ng-click="formCtrl.objetosCtrl.addObjeto()">Adicionar Objeto</button>
+				<i class="sc-icon sc-icon-mais-1 sc-badge-hover-green visible-xs sc-m-h-lg" ng-click="formCtrl.objetosCtrl.addObjeto()"></i>
+				<button ng-if="formCtrl.params.objetos.length > 0" class="sc-btn align-self-center sc-btn-red sc-btn-thin sc-btn-sm hidden-xs sc-p-h-lg" ng-click="formCtrl.formCtrl.limparForm()">Limpar formulário</button>
+				<i ng-if="formCtrl.params.objetos.length > 0" class="sc-icon sc-icon-lixeira-2 sc-badge-hover-red visible-xs" ng-click="formCtrl.formCtrl.limparForm()"></i>
+			</div>
+			<div ng-repeat="objeto in formCtrl.params.objetos track by $index" class="sc-fieldset sc-m-h-md flex-row sc-text-sm-xs">
+				<div class="sc-fieldset-head flex-row col-xs-12">
+					<div class="sc-input-group fcol-xs-50 fcol-sm-30 fcol-md-20 sc-text-sm" ng-if="!categoria.edit && !categoria.new">
+						<select class="sc-input sc-input-default" ng-options="categoria as categoria.label disable when categoria.disabled for categoria in indexCtrl.categoriasCtrl.list track by categoria.id" ng-model="objeto.categoria" ng-change="formCtrl.objetosCtrl.setCategoria(objeto)">
+							<option value="">Selecione ou cadastre</option>
+						</select>
+						<button class="sc-btn sc-btn-default sc-dropdown">
+							<i class="sc-icon sc-icon-reticiencias-v" ng-click="categoria.toggleToolbar()"></i>
+						</button>
+						<ul class="sc-dropdown-menu" ng-show="categoria.menuIsOpen">
+							<li ng-click="indexCtrl.categoriaCtrl.new()">
+								<span>Nova Categoria</span>
+							</li>
+							<li ng-click="indexCtrl.categoriaCtrl.edit(categoria)">
+								<span>Editar categoria</span>
+							</li>
+							<li ng-click="indexCtrl.categoriaCtrl.rmv(categoria)">
+								<span>Excluir categoria</span>
+							</li>
+						</ul>
+					</div>
+					<div ng-if="categoria.edit || categoria.new" class="sc-input-group">
+						<input class="sc-input-default" ng-model="categoria.label">
+						<button class="sc-btn sc-btn-green" ng-click="indexCtrl.categoriasCtrl.salvarCategoria()"><i class="sc-icon sc-icon-visto-1"></i></button>
+						<button class="sc-btn sc-btn-red" ng-click="indexCtrl.categoriasCtrl.cancelarCadastro()"><i class="sc-icon sc-icon-fechar-1"></i></button>
+					</div>
+					<div class="fcol-xs-auto">
+						<i class="sc-icon sc-icon-mais-1 sc-badge-hover-green sc-m-h-lg" ng-click="formCtrl.objetosCtrl.addItem(objeto)"></i>
+						<i class="sc-icon sc-icon-lixeira-2 sc-badge-hover-red " ng-click="formCtrl.objetosCtrl.rmvObjeto(objeto)"></i>
+					</div>
+				</div>
+				<div class="col-xs-12">
+					<ul>
+						<li ng-if="objeto.itens.length > 0">
+							<div class="flex-row">
+								<div class="fcol-xs-15 fcol-sm-5em">
+									<span class="sc-label">Qtd</span>
+								</div>
+								<div class="sc-m-h-lg sc-p-h-lg fcol-xs-60">
+									<span class="sc-label">Item</span>
+								</div>
+							</div>
+						</li>
+						<li ng-repeat="item in objeto.itens track by $index" class="sc-p-t-md">
+							<div class="flex-row">
+								<div class="fcol-xs-15 fcol-sm-5em">
+									<input class="sc-input sc-input-default sc-input-thin col-xs-12" ng-model="item.qtd" type="number" max="999" min="0" step="1">
+								</div>
+								<div class="sc-m-h-lg sc-p-h-lg fcol-xs-60">
+									<input class="sc-input sc-input-default sc-input-thin col-xs-12" ng-model="item.label" type="text">
+								</div>
+								<div class="fcol-xs-auto"></div>
+								<div class="fcol-xs-3em align-right">
+									<i class="sc-icon sc-icon-lixeira-1 sc-badge-hover-red align-self-center" ng-click="formCtrl.objetosCtrl.rmvItem(objeto, item)"></i>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="sc-fieldset flex-row">
+			<div class="col-xs-12">
+				<div class="sc-label">Observações:</div>
+				<textarea class="sc-input-default" rows="5" cols="30" ng-model="formCtrl.params.observacoes"></textarea>
+			</div>
+		</div>
+		<div class="align-right">
+			<button class="sc-btn sc-btn-green sc-btn-block-only-xs sc-m-sm" ng-click="formCtrl.formCtrl.salvarEPassar(passagem)">Salvar e passar</button>
+			<button class="sc-btn sc-btn-blue sc-btn-block-only-xs sc-m-sm" ng-click="formCtrl.formCtrl.salvar(passagem)">Salvar</button>
+			<button class="sc-btn sc-btn-red sc-btn-block-only-xs sc-m-sm" ng-click="indexCtrl.formCtrl.cancelar(passagem)">Cancelar</button>
+		</div>
+	</form>
+</div>

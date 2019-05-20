@@ -1,0 +1,55 @@
+<div id="top-bar-filter" class="col-xs-12" style="display: block;">
+	<form>
+		<div class="col-xs-3">
+			<label class="sc-label">Saaaiu:</label>
+			<select class="sc-input-default" ng-options="porteiro as porteiro.nome for porteiro in indexCtrl.porteiroCtrl.list" ng-model="indexCtrl.filtroCtrl.params.quemSai"></select>
+		</div>
+		<div class="col-xs-3">
+			<label class="sc-label">Entrou:</label>
+			<select class="sc-input-default" ng-options="porteiro as porteiro.nome for porteiro in indexCtrl.porteirosCtrl.list" ng-model="indexCtrl.filtroCtrl.params.quemEntra"></select>
+		</div>
+		<div class="col-xs-3">
+			<label class="sc-label">Início</label>
+			<input sc-date-input type="date" max="3000-12-31" min="1991-01-01" class="sc-input-default" ng-model="indexCtrl.filtroCtrl.params.data_inicio">
+		</div>
+		<div class="col-xs-3">
+			<label class="sc-label">Fim</label>
+			<input sc-date-input type="date" max="3000-12-31" min="1991-01-01" class="sc-input-default" ng-model="indexCtrl.filtroCtrl.params.data_fim">
+		</div>
+		<div class="col-xs-3">
+			<label class="sc-label">Status:</label>
+			<select class="sc-input-default" ng-model="indexCtrl.filtroCtrl.params.status">
+				<option value="pendente">Pendente</option>
+				<option value="realizada">Realizada</option>
+				<option value="cancelada">Cancelada</option>
+			</select>
+		</div>
+		<div class="col-xs-3">
+			<label class="sc-label">Tipo de data:</label>
+			<select class="sc-input-default" ng-model="indexCtrl.filtroCtrl.params.tipo_data">
+				<option value="passada_em">Passada em</option>
+				<option value="cadastrada_em">Cadastrada em</option>
+			</select>
+		</div>
+		<hr>
+		<div ng-if="indexCtrl.filtroCtrl.params.searchList.length > 0">
+			<div ng-repeat="data in indexCtrl.filtroCtrl.params.searchList">
+			</div>
+		</div>
+		<hr>
+		<div class="col-xs-12">
+			<button class="sc-btn sc-btn-blue sc-btn-awesomeness" ng-click="indexCtrl.filtroCtrl.pesquisar()">
+				<div class="sc-btn-icon"><i class="sc-icon sc-icon-visto-1"></i></div>
+				<div class="sc-btn-text">Aplicar</div>
+			</button>
+			<button class="sc-btn sc-btn-red sc-btn-awesomeness" ng-click="indexCtrl.filtroCtrl.limparFiltro()">
+				<div class="sc-btn-icon"><i class="sc-icon sc-icon-fechar-1"></i></div>
+				<div class="sc-btn-text">Limpar Filtro</div>
+			</button>
+			<button class="sc-btn sc-btn-green sc-btn-awesomeness" ng-click="indexCtrl.filtroCtrl.addPeriodo()">
+				<div class="sc-btn-icon"><i class="sc-icon sc-icon-mais-1"></i></div>
+				<div class="sc-btn-text">Adicionar Período</div>
+			</button>
+		</div>
+	</form>
+</div>

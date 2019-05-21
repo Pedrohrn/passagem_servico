@@ -1,24 +1,42 @@
 angular.module('scApp').lazy
 
-.controller( 'PassagemServicos::FormCtrl', [ '$scModal', 'scAlert', 'scToggle', 'itemCtrl' , function(scModal, scAlert, scToggle, itemCtrl) {
+.controller( 'PassagemServicos::FormCtrl', [ '$scModal', 'scAlert', 'scToggle', function(scModal, scAlert, scToggle) {
 	vm = this;
-	vm.params = { objetos: [] } || passagem;
-	vm.itemCtrl = itemCtrl
 
-	vm.init = {
-		init: function() {
-			console.log(vm.itemCtrl)
-			if (passagem.edit.opened || vm.itemCtrl.duplicata) {
-				vm.params = angular.copy(passagem)
-			} else {
-				vm.params = { perfil: [], objetos: [] }
-			}
+	vm.new = false;
+	vm.params = {};
+	vm.listCtrl = null;
+	vm.passagem = null;
+	vm.itemCtrl = null;
+	vm.formularioCtrl = null;
+
+	vm.init = function(passagem, listCtrl, itemCtrl, formularioCtrl){
+		vm.passagem = passagem
+		vm.itemCtrl = itemCtrl
+		vm.formularioCtrl = formularioCtrl
+
+		vm.params = angular.copy(passagem || {});
+		if (Object.blank(passagem)) {
+			vm.formCtrl.current_perfil = undefined
+		} else {
+			vm.formCtrl.current_perfil = angular.copy(passagem.perfil)
 		}
+		vm.listCtrl = listCtrl
+
+		if (Object.blank(vm.params)) {
+			vm.params.objetos = [];
+			vm.params.current_perfil = undefined;
+			vm.new = true;
+		};
+
+/*		if (vm.itemCtrl.duplicata) {
+			vm.params = angular.copy(vm.itemCtrl.params)
+		};*/
+
 	};
 
 	vm.formCtrl = {
 		setPerfil: function() {
-			console.log('oi')
 			scAlert.open({
 				title: 'Atenção!',
 				messages: [
@@ -29,10 +47,18 @@ angular.module('scApp').lazy
 					{ label: 'Mesclar', tooltip: 'Mescla os itens, por categoria, do formulário abaixo com os itens do perfil selecionado', color: 'blue', action: function() {
 							if (Object.blank(vm.params.objetos)) {
 								console.log('1')
-									vm.params.perfil = angular.copy(vm.formCtrl.current_perfil)
-									vm.params.objetos = angular.copy(vm.params.perfil.objetos)
+								for (var k = 0; k < vm.params.objetos.length; k++){
+									if (vm.params.objetos[k].categoria == undefined || vm.params.objetos[k].categoria == {})
+										vm.params.objetos.remove(vm.params.objetos[k])
+								}
+								vm.params.perfil = angular.copy(vm.formCtrl.current_perfil)
+								vm.params.objetos = angular.copy(vm.params.perfil.objetos)
 							} else if ( vm.params.perfil && !Object.blank(vm.params.objetos) ) {
 								console.log('2')
+								for (var k = 0; k < vm.params.objetos.length; k++){
+									if (vm.params.objetos[k].categoria == undefined || vm.params.objetos[k].categoria == {})
+										vm.params.objetos.remove(vm.params.objetos[k])
+								}
 								vm.params.perfil = angular.copy(vm.formCtrl.current_perfil)
 								var menor = undefined
 								var maior = undefined
@@ -54,6 +80,10 @@ angular.module('scApp').lazy
 								vm.params.objetos = vm.params.objetos.concat(vm.params.perfil.objetos)
 							} else if (vm.params.objetos.length > 0 && Object.blank(vm.params.perfil)) {
 								console.log('3')
+								for (var k = 0; k < vm.params.objetos.length; k++){
+									if (vm.params.objetos[k].categoria == undefined || vm.params.objetos[k].categoria == {})
+										vm.params.objetos.remove(vm.params.objetos[k])
+								}
 								var aux = angular.copy(vm.params.objetos);
 								vm.params.objetos = [];
 								console.log(aux)
@@ -95,8 +125,6 @@ angular.module('scApp').lazy
 					{ label: 'Cancelar', color: 'gray', action: function() { scAlert.close() ; vm.params.perfil = [] } }
 				]
 			})
-			console.log('tchau')
-			console.log(scAlert)
 		},
 
 		limparForm: function() {

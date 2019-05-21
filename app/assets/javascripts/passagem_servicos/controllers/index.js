@@ -77,6 +77,7 @@ angular.module('scApp').lazy
 
 	vm.itemCtrl = {
 		duplicata: false,
+		params: {},
 
 		init: function(passagem){
 			passagem.menu = new scToggle()
@@ -114,7 +115,7 @@ angular.module('scApp').lazy
 		duplicar: function(passagem) {
 			this.duplicata = true;
 			vm.novaPassagemCtrl.new = true;
-			params = angular.copy(passagem)
+			vm.itemCtrl.params = angular.copy(passagem)
 		},
 
 		rmv: function(passagem) {
@@ -204,7 +205,12 @@ angular.module('scApp').lazy
 		],
 		edit: false,
 		novaCategoria: '',
-		menuIsShown: false,
+		toolbarIsShown: false,
+		newCategoria: false,
+
+		new: function(){
+			this.newCategoria = true;
+		},
 
 		desativar: function(categoria) {
 			title: '';
@@ -222,18 +228,18 @@ angular.module('scApp').lazy
 			})
 		},
 
-		editar: function(categoria) {
-			if (categoria.edit) {
+		editar: function(objeto, categoria) {
+			if (objeto.edit || vm.categoriasCtrl.newCategoria) {
 				scAlert.open({
 					title: 'Deseja cancelar a edição?',
 					buttons: [
-					  { label: 'Sim', color: 'yellow', action: function() { categoria.edit = false } },
+					  { label: 'Sim', color: 'yellow', action: function() { objeto.edit = false } },
 					  { label: 'Não', color: 'gray'}
 					]
 				})
 			} else {
-				categoria.edit = true
-				this.novaCategoria = angular.copy(categoria.label)
+				objeto.edit = true
+				vm.categoriasCtrl.new_categoria = angular.copy(objeto.categoria.label)
 			}
 		},
 
@@ -250,13 +256,13 @@ angular.module('scApp').lazy
 			})
 		},
 
-		salvar: function(categoria) {
-			categoria = categoria || {};
-
+		salvar: function() {
+			vm.categoriasCtrl.list.push({categoria: vm.categoriasCtrl.new_categoria, id: vm.categoriasCtrl.list.length+1})
+			console.log(vm.categoriasCtrl.list)
 		},
 
-		showMenu: function(categoria) {
-			categoria.menuIsShown = !categoria.menuIsShown
+		toggleToolbar: function(objeto) {
+			objeto.toolbarIsShown = !objeto.toolbarIsShown
 		},
 	};
 
@@ -307,25 +313,17 @@ angular.module('scApp').lazy
 		menuIsShow: false,
 		newPerfil: false,
 		params: {},
+		isCreating: false,
 
 		init: function(perfil) {
 			perfil.edit = new scToggle()
 		},
 
-		formInit: function(perfil) {
-			if (this.newPerfil && !this.duplicata) {
-				perfil = { objetos: [] }
-				console.log(perfil)
-			} else if (this.newPerfil && this.duplicata) {
-				console.log(perfil)
-				vm.perfilCtrl.params = angular.copy(perfil)
-				console.log(vm.perfilCtrl.params)
-			}
-		},
-
 		novoPerfil: function() {
 			if (this.newPerfil == false) {
 				this.newPerfil = true
+				this.isCreating = true
+				this.params = { objetos: []}
 			} else {
 				scAlert.open({
 					title: 'Atenção!',
@@ -333,7 +331,7 @@ angular.module('scApp').lazy
 						{ msg: 'Deseja realmente fechar o formulário? Os dados não salvos serão perdidos.'},
 					],
 					buttons: [
-						{ label: 'Sim', color: 'yellow', action: function() { vm.perfilCtrl.newPerfil = false } },
+						{ label: 'Sim', color: 'yellow', action: function() { vm.perfilCtrl.newPerfil = false; vm.perfilCtrl.isCreating = false } },
 						{ label: 'Não', color: 'gray'}
 					]
 				})
@@ -348,11 +346,29 @@ angular.module('scApp').lazy
 			this.modal.close()
 		},
 
+		addObjeto: function(){
+			vm.perfilCtrl.params.objetos.unshift({categoria: undefined, itens: []})
+		},
+
+		rmvObjeto: function(objeto){
+			vm.perfilCtrl.params.objetos.remove(objeto)
+		},
+
+		addItem: function(objetos) {
+			objetos.itens.unshift({ label: '', qtd: undefined })
+		},
+
+		rmvItem: function(objeto, item){
+			objeto.itens.remove(item)
+		},
+
 		editar: function(perfil) {
 			if (perfil.edit.opened) {
 				return vm.perfilCtrl.cancelar(perfil)
 			} else {
 				perfil.edit.opened = true
+				this.isCreating = true
+				vm.perfilCtrl.params = angular.copy(perfil)
 			}
 		},
 
@@ -361,37 +377,39 @@ angular.module('scApp').lazy
 		},
 
 		duplicar: function(perfil) {
-			this.duplicata = true
 			this.newPerfil = true
+			this.duplicata = true
+			this.isCreating = true
 			vm.perfilCtrl.params = angular.copy(perfil)
 			console.log(vm.perfilCtrl.params)
 		},
 
 		cancelar: function(perfil) {
-			if (perfil.edit && perfil.edit.opened) {
+			if (this.newPerfil) {
 				scAlert.open({
 					title: 'Atenção!',
 					messages: [
 					  { msg: 'Deseja realmente fechar o formulário? Dados não salvos serão perdidos.'}
 					],
 					buttons: [
-						{ label: 'Sim', color: 'yellow', action: function() { perfil.edit.opened = false; } },
+						{ label: 'Sim', color: 'yellow', action: function() { vm.perfilCtrl.newPerfil = false; vm.perfilCtrl.isCreating = false } },
 						{ label: 'Não', color: 'gray'}
 					]
 				})
-			} else if (this.newPerfil) {
+			} else if (perfil.edit && perfil.edit.opened) {
 				scAlert.open({
 					title: 'Atenção!',
 					messages: [
 					  { msg: 'Deseja realmente fechar o formulário? Dados não salvos serão perdidos.'}
 					],
 					buttons: [
-						{ label: 'Sim', color: 'yellow', action: function() { vm.perfilCtrl.newPerfil = false; } },
+						{ label: 'Sim', color: 'yellow', action: function() { perfil.edit.opened = false; vm.perfilCtrl.isCreating = false } },
 						{ label: 'Não', color: 'gray'}
 					]
 				})
 			} else {
 				perfil.edit.toggle()
+				vm.perfilCtrl.isCreating = true
 			}
 		},
 
@@ -410,6 +428,28 @@ angular.module('scApp').lazy
 				]
 			})
 		},
+
+		limparFormulario: function(){
+			scAlert.open({
+				title: 'Tem certeza que deseja limpar o formulário abaixo?',
+				buttons: [
+					{ label: 'Sim', color: 'yellow', action: function() {vm.perfilCtrl.params.objetos = [] } },
+					{ label: 'Não', color: 'gray'}
+				]
+			})
+		},
+
+/*		isCreatingSomething: function() {
+			if (this.isCreating) {
+				scAlert.open({
+					title: 'Ainda há edições em andamento. Deseja cancelá-las?',
+					buttons: [
+						{ label: 'Sim', color: 'yellow', action: function() { vm.perfilCtrl.isCreating = false; return vm.perfilCtrl.trocarMenu() } },
+						{ label: 'Não', color: 'gray'}
+					]
+				})
+			}
+		},*/
 
 		showCategorias: function() {
 			if (this.viewCategorias == false && this.viewPerfis == true || this.viewPermissoes == true) {

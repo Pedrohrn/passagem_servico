@@ -61,7 +61,7 @@
 						</div>
 					</div>
 					<div ng-if="perfil.edit.opened" class="sc-p-o clear"></div>
-					<div class="fcol-xs-100 sc-p-t-none" ng-include="indexCtrl.templates.passagem_servicos.perfil_form" ng-if="perfil.edit.opened"></div>
+					<div class="fcol-xs-100 sc-p-t-none sc-cursor-default" ng-include="indexCtrl.templates.passagem_servicos.perfil_form" ng-if="perfil.edit.opened"></div>
 				</li>
 			</ul>
 			<ul ng-if="!indexCtrl.perfilCtrl.viewPerfis && indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPermissoes" ng-class="{'sc-accordion': indexCtrl.categoriasCtrl.list.length > 0}">

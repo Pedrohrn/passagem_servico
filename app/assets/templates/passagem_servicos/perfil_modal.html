@@ -6,6 +6,9 @@
 			<div ng-if="indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPerfis" class="col-xs-2 sc-m-r-xxl">Categorias</div>
 		</div>
 		<button ng-if="!indexCtrl.perfilCtrl.viewPermissoes" class="sc-btn sc-btn-green sc-btn-sm sc-btn-thin">
+			<span class="sc-text-sm">
+				<i class="sc-icon sc-icon-mais-1"></i>
+			</span>
 			<span ng-if="indexCtrl.perfilCtrl.viewPerfis && !indexCtrl.perfilCtrl.viewCategorias" ng-click="indexCtrl.perfilCtrl.novoPerfil()">Novo Perfil</span>
 			<span ng-if="indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPerfis" ng-click="indexCtrl.perfilCtrl.newCategoria()">Nova Categoria</span>
 		</button>
@@ -13,7 +16,7 @@
 	</div>
 
 	<div class="sc-modal-body">
-		<div class="sc-btn-group sc-m-l-xxxl" style="z-index: 150;">
+		<div class="sc-btn-group sc-m-l-xxxl" style="z-index: 1; margin-bottom: 0em;">
 			<button class="sc-btn sc-btn-default" ng-click="indexCtrl.perfilCtrl.showPerfis()" ng-class="{'sc-btn-blue': indexCtrl.perfilCtrl.viewPerfis && !indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPermissoes}">Perfis</button>
 			<button class="sc-btn sc-btn-default" ng-click="indexCtrl.perfilCtrl.showCategorias()" ng-class="{'sc-btn-blue': !indexCtrl.perfilCtrl.viewPerfis && indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPermissoes}">Categorias</button>
 			<button class="sc-btn sc-btn-default" ng-click="indexCtrl.perfilCtrl.showPermissoes()" ng-class="{'sc-btn-blue': indexCtrl.perfilCtrl.viewPermissoes && !indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPerfis}">Permissões</button>

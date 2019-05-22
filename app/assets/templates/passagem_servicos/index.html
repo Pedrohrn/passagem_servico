@@ -1,4 +1,4 @@
-<div ng-controller="PassagemServicos::IndexCtrl as indexCtrl">
+<div ng-controller="PassagemServicos::IndexCtrl as indexCtrl" ng-init="indexCtrl.init()">
 	<section id="top-bar">
 		<div id="top-bar-content">
 			<div ng-include="indexCtrl.templates.passagem_servicos.top_bar_content"></div>
@@ -86,11 +86,17 @@
 					<div ng-include="indexCtrl.templates.passagem_servicos.show"></div>
 				</div>
 			</li>
-			<li class="sc-accordion" ng-if="indexCtrl.listCtrl.list.length == 0">
+			<li class="sc-accordion" ng-if="!indexCtrl.listCtrl.list.any() || indexCtrl.filtroCtrl.params.loading">
 				<div class="sc-accordion-head sc-bg-white">
 					<div class="col-xs-12 sc-text-gray align-center">
-						<i class="sc-icon sc-icon-exclamacao-3"></i>
-						<span>Nenhuma passagem foi encontrada!</span>
+						<div ng-if="loading">
+							<i class="sc-icon sc-icon-carregando-2 sc-icon-spin"></i>
+							<span>Carregando</span>
+						</div>
+						<div ng-if="!indexCtrl.listCtrl.list.any()">
+							<i class="sc-icon sc-icon-exclamacao-3"></i>
+							<span>Nenhuma passagem foi encontrada!</span>
+						</div>
 					</div>
 				</div>
 			</li>

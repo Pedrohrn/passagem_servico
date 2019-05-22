@@ -1,5 +1,5 @@
 // templates
-app = angular.module('scApp', ['ngRoute', 'sc.commons.directives.modal', 'sc.commons.directives.scStopClick', 'sc.commons.factories.toggle', 'sc.commons.service.scAlert', 'sc.commons.scTopMessages', 'sc.commons.filters.nl2br' ])
+app = angular.module('scApp', ['ngRoute', 'ngResource', 'sc.commons.directives.modal', 'sc.commons.directives.scStopClick', 'sc.commons.factories.toggle', 'sc.commons.service.scAlert', 'sc.commons.scTopMessages', 'sc.commons.filters.nl2br' ])
 
 .config(function($routeProvider, $locationProvider, $controllerProvider, $compileProvider, $filterProvider, $provide){
   $locationProvider.html5Mode({
@@ -52,6 +52,7 @@ app = angular.module('scApp', ['ngRoute', 'sc.commons.directives.modal', 'sc.com
     resolve : carregarCssJs({
       js: [
         "<%= asset_path('templates.js') %>", // Não, Jamais, nunca tire do primeiro item!!!
+        "<%= asset_path('passagem_servicos/resources/passagem_servico.js') %>",
         "<%= asset_path('passagem_servicos/controllers/index.js') %>",
         "<%= asset_path('passagem_servicos/controllers/form.js') %>",
       ],

@@ -14,8 +14,10 @@
 //= require modernizr
 //= require rails-ujs
 //= require activestorage
-//= require angular
-//= require angular-route
-//= require angular-rails-templates
+
+//= require lib/angular/angular.min
+//= require lib/angular/angular-route.min
+//= require lib/angular/angular-resource.min
+
 //= require_tree ./seucondominio
 //= require app

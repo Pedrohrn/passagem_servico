@@ -5,8 +5,11 @@
 	</button>
 	<div class="sc-p-h-lg fcol-sm-60 fcol-xs-70 fcol-lg-45">
 		<form class="sc-input-group">
-			<input class="sc-input sc-input-default" ng-model="filter.param" type="text">
-			<button class="sc-btn sc-btn-blue" ng-click="applyFilter()"><i class="sc-icon sc-icon-lupa-1"></i></button>
+			<input class="sc-input sc-input-default" ng-model="indexCtrl.filtroCtrl.params.q" type="text">
+			<button class="sc-btn sc-btn-blue" ng-click="indexCtrl.filtroCtrl.exec()">
+				<i class="sc-icon sc-icon-lupa-1" ng-if="!indexCtrl.filtroCtrl.params.loading"></i>
+				<i class="sc-icon sc-icon-carregando-1 sc-icon-spin" ng-if="filter.loading"></i>
+			</button>
 			<button class="sc-btn sc-btn-blue" ng-class="{'sc-btn-gray': indexCtrl.filtroCtrl.filtroAvancado}" ng-click="indexCtrl.filtroCtrl.showFilter()"><i class="sc-icon sc-icon-filtro-2"></i></button>
 			<button class="sc-btn sc-btn-blue" ng-click="makePdf()"><i class="sc-icon sc-icon-impressora"></i></button>
 		</form>
@@ -76,7 +79,7 @@
 			</div>
 		</div>
 		<div class="col-xs-12 sc-p-b-lg">
-			<button class="sc-btn sc-btn-blue sc-btn-awesomeness" ng-click="indexCtrl.filtroCtrl.pesquisar()">
+			<button class="sc-btn sc-btn-blue sc-btn-awesomeness" ng-click="indexCtrl.filtroCtrl.exec()()">
 				<div class="sc-btn-icon"><i class="sc-icon sc-icon-visto-1"></i></div>
 				<div class="sc-btn-text">Aplicar</div>
 			</button>

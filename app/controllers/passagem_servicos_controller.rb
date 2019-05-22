@@ -1,10 +1,11 @@
 class PassagemServicosController < ApplicationController
+	def service() ::PassagemServicosService; end
 
 	def index
 		respond_to do |format|
 			format.html{ layout_erp }
 			format.json{
-				st, resp = ::PassagemServicosService.index(params)
+				st, resp = service.index(params)
 
 				case st
 				when :success then render json: resp, status: :ok
@@ -14,7 +15,7 @@ class PassagemServicosController < ApplicationController
 	end
 
 	def show
-		st, resp = ::PassagemServicosService.show(params)
+		st, resp = service.show(params)
 
 		case st
 		when :success then render json: resp, status: :ok
@@ -23,7 +24,7 @@ class PassagemServicosController < ApplicationController
 	end
 
 	def create
-		st, resp = ::PassagemServicosService.create(params)
+		st, resp = service.create(params)
 
 		case st
 		when :success then render json: resp, status: :ok

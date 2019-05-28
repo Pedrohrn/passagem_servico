@@ -1,7 +1,7 @@
 angular.module('scApp').lazy
 .controller 'PassagemServicos::IndexCtrl', [
-	'$scModal', 'scAlert', 'scToggle', 'scTopMessages', 'Templates', 'PassagemServico'
-	(scModal, scAlert, scToggle, scTopMessages, Templates, PassagemServico)->
+	'$scModal', 'scAlert', 'scToggle', 'scTopMessages', 'Templates', 'PassagemServico', 'Categoria'
+	(scModal, scAlert, scToggle, scTopMessages, Templates, PassagemServico, Categoria)->
 		vm = this
 		vm.templates = Templates
 
@@ -90,6 +90,7 @@ angular.module('scApp').lazy
 				passagem.edit = new scToggle()
 				passagem.acc = new scToggle()
 				passagem.modal = new scModal()
+				passagem.status = if passagem.status == 'Pendente' || 'pendente' then {color: 'yellow', label: 'Pendente'} else {color: 'green', label: 'Realizada'}
 
 			editar: (passagem)->
 				passagem.edit.open()
@@ -97,7 +98,8 @@ angular.module('scApp').lazy
 			accToggle: (passagem)->
 				passagem.acc.toggle() unless passagem.edit && passagem.edit.opened
 				vm.formCtrl.cancelar passagem, ->
-					passagem.acc.toggle()
+				  passagem.acc.toggle()
+				PassagemServico.show(passagem)
 
 			duplicar: (passagem)->
 				@duplicata = true;
@@ -111,7 +113,7 @@ angular.module('scApp').lazy
 						{ msg: 'Deseja realmente excluir este registro? Os dados não poderão ser recuperados após à exclusão.' }
 					],
 					buttons: [
-						{ label: 'Excluir', color: 'red', action: -> vm.listCtrl.list.splice(passagem.id-1, 1) },
+						{ label: 'Excluir', color: 'red', action: -> vm.listCtrl.list.splice(passagem.id-1, 1); PassagemServico.destroy(passagem) },
 						{ label: 'Cancelar', color: 'gray' }
 					]
 
@@ -158,40 +160,47 @@ angular.module('scApp').lazy
 						]
 
 		vm.categoriasCtrl =
-			list: [
-				{ id: 1, label: 'Funcionamento', disabled: false },
-				{ id: 2, label: 'Acontecimento', disabled: false },
-				{ id: 3, label: 'Empréstimos', disabled: true },
-			],
+			list: [],
 			edit: false,
-			novaCategoria: '',
+			novaCategoria: {},
 			toolbarIsShown: false,
-			newCategoria: false,
+			new: false,
 
-			new: ->
-				@newCategoria = true;
+			newCategoria: ->
+				if vm.categoriasCtrl.new
+					scAlert.open
+						title: 'Deseja cancelar a edição? Dados não salvos serão perdidos.',
+						buttons: [
+							{	label: 'Sim', color: 'yellow', action: -> vm.categoriasCtrl.new = false }
+						]
+				else
+					vm.categoriasCtrl.new = true
+
+			init: (categoria)->
+				categoria.edit = new scToggle()
+				categoria.menu = new scToggle()
 
 			desativar: (categoria)->
-				label = if categoria.disabled then 'reativar' else 'desativar'
+				label = if categoria.desativada then 'reativar' else 'desativar'
 
 				scAlert.open
 					title: "Deseja #{label} a categoria?",
 					buttons: [
-					  { label: 'Sim', color: 'yellow', action: -> categoria.disabled = !categoria.disabled },
+					  { label: 'Sim', color: 'yellow', action: -> categoria.desativada = !categoria.desativada },
 					  { label: 'Não', color: 'gray' }
 					]
 
-			editar: (objeto, categoria)->
-				if objeto.edit || vm.categoriasCtrl.newCategoria
+			editar: (categoria)->
+				if categoria.edit || vm.categoriasCtrl.new
 					scAlert.open
 						title: 'Deseja cancelar a edição?',
 						buttons: [
-						  { label: 'Sim', color: 'yellow', action: -> objeto.edit = false },
+						  { label: 'Sim', color: 'yellow', action: -> categoria.edit = false },
 						  { label: 'Não', color: 'gray'}
 						]
 				else
-					objeto.edit = true
-					vm.categoriasCtrl.new_categoria = angular.copy(objeto.categoria.label)
+					categoria.edit = true
+					vm.categoriasCtrl.new_categoria = angular.copy(categoria.categoria.nome)
 
 			rmv: (categoria)->
 				scAlert.open
@@ -200,7 +209,7 @@ angular.module('scApp').lazy
 						{ msg: 'Deseja realmente excluir essa categoria? As passagens antigas não serão afetadas, mas os perfis que usam essa categoria não a terão mais em seus objetos.' }
 					],
 					buttons: [
-						{ label: 'Excluir', color: 'red', action: -> vm.categoriasCtrl.list.splice(categoria.id-1, 1) },
+						{ label: 'Excluir', color: 'red', action: -> vm.categoriasCtrl.list.splice(categoria.id-1, 1); Categoria.destroy(categoria) },
 						{ label: 'Cancelar', color: 'gray'}
 					]
 
@@ -211,6 +220,10 @@ angular.module('scApp').lazy
 
 			toggleToolbar: (objeto)->
 				objeto.toolbarIsShown = !objeto.toolbarIsShown
+
+			submit: ->
+				Categoria.create(vm.categoriasCtrl.novaCategoria)
+				console.log(vm.categoriasCtrl.novaCategoria)
 
 		vm.perfilCtrl =
 			list: [

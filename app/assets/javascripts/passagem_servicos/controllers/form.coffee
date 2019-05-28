@@ -1,8 +1,8 @@
 angular.module('scApp').lazy
 
 .controller 'PassagemServicos::FormCtrl', [
-	'$scModal', 'scAlert', 'scToggle',
-	(scModal, scAlert, scToggle)->
+	'$scModal', 'scAlert', 'scToggle', 'PassagemServico',
+	(scModal, scAlert, scToggle, PassagemServico)->
 		vm = this
 
 		vm.new = false
@@ -12,15 +12,11 @@ angular.module('scApp').lazy
 		vm.itemCtrl = null
 		vm.formularioCtrl = null
 
-		vm.init = (passagem, listCtrl, itemCtrl, formularioCtrl)->
+		vm.init = (passagem)->
 			vm.passagem = passagem
-			vm.itemCtrl = itemCtrl
-			vm.formularioCtrl = formularioCtrl
 
 			vm.params = angular.copy(passagem || {});
 			vm.formCtrl.current_perfil = if Object.blank(passagem) then undefined else angular.copy(passagem.perfil)
-
-			vm.listCtrl = listCtrl
 
 			return unless Object.blank(vm.params)
 			vm.params.objetos = [];
@@ -61,6 +57,12 @@ angular.module('scApp').lazy
 			cancelar: ->
 				vm.formCtrl.current_perfil = if Object.blank(vm.params.perfil) then {} else vm.params.perfil
 
+			salvar: ->
+				vm.formCtrl.params
+
+			salvar_e_passar: ->
+				vm.formCtrl.params
+
 			mesclarObjetos: ->
 				# garantindo objetos com categorias
 				listRemove = []
@@ -93,7 +95,7 @@ angular.module('scApp').lazy
 			setCategoria: (objeto)->
 				count = 0;
 				for item in vm.params.objetos
-					continue unless item.categoria?.label == objeto.categoria?.label
+					continue unless item.categoria?.nome == objeto.categoria?.nome
 					count++;
 
 				return unless count >= 2
@@ -117,6 +119,10 @@ angular.module('scApp').lazy
 
 			rmvItem: (objeto, item)->
 				objeto.itens.remove(item)
+
+		vm.submit = ->
+			PassagemServico.create(vm.params)
+			console.log(vm.params)
 
 		vm
 ]

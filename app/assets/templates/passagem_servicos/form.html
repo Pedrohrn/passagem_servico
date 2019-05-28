@@ -54,7 +54,7 @@
 			<div ng-repeat="objeto in formCtrl.params.objetos track by $index" class="sc-fieldset sc-m-h-md flex-row sc-text-sm-xs">
 				<div class="sc-fieldset-head flex-row col-xs-12">
 					<div class="sc-input-group fcol-xs-50 fcol-sm-30 fcol-md-20 sc-text-sm" ng-if="!categoria.edit && !categoria.new">
-						<select class="sc-input sc-input-default" ng-options="categoria as categoria.label disable when categoria.disabled for categoria in indexCtrl.categoriasCtrl.list track by categoria.id" ng-model="objeto.categoria" ng-change="formCtrl.objetosCtrl.setCategoria(objeto)">
+						<select class="sc-input sc-input-default" ng-options="categoria as categoria.nome disable when categoria.desativada for categoria in indexCtrl.categoriasCtrl.list track by categoria.id" ng-model="objeto.categoria" ng-change="formCtrl.objetosCtrl.setCategoria(objeto)">
 							<option value="">Selecione ou cadastre</option>
 						</select>
 						<button class="sc-btn sc-btn-default sc-dropdown">

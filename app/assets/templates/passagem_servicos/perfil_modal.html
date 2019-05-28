@@ -10,7 +10,7 @@
 				<i class="sc-icon sc-icon-mais-1"></i>
 			</span>
 			<span ng-if="indexCtrl.perfilCtrl.viewPerfis && !indexCtrl.perfilCtrl.viewCategorias" ng-click="indexCtrl.perfilCtrl.novoPerfil()">Novo Perfil</span>
-			<span ng-if="indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPerfis" ng-click="indexCtrl.perfilCtrl.newCategoria()">Nova Categoria</span>
+			<span ng-if="indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPerfis" ng-click="indexCtrl.categoriasCtrl.newCategoria()">Nova Categoria</span>
 		</button>
 		<i class="sc-modal-close sc-badge-hover-red sc-icon-fechar-1 sc-cursor-pointer" ng-click=indexCtrl.perfilCtrl.modal.close()></i>
 	</div>
@@ -68,6 +68,17 @@
 				</li>
 			</ul>
 			<ul ng-if="!indexCtrl.perfilCtrl.viewPerfis && indexCtrl.perfilCtrl.viewCategorias && !indexCtrl.perfilCtrl.viewPermissoes" ng-class="{'sc-accordion': indexCtrl.categoriasCtrl.list.length > 0}">
+				<li ng-if="indexCtrl.categoriasCtrl.new">
+					<div class="flex-row sc-p-xs sc-accordion-head">
+						<form ng-submit="indexCtrl.categoriasCtrl.submit()">
+							<div class="sc-input-group">
+								<input class="sc-input-default" ng-model="indexCtrl.categoriasCtrl.novaCategoria.nome">
+								<button class="sc-btn sc-btn-green" type="submit"><i class="sc-icon sc-icon-visto-1"></i></button>
+								<button class="sc-btn sc-btn-red" ng-click="indexCtrl.categoriasCtrl.newCategoria()"><i class="sc-icon sc-icon-fechar-1"></i></button>
+							</div>
+						</form>
+					</div>
+				</li>
 				<li ng-if="indexCtrl.categoriasCtrl.list.length <= 0">
 					<div class="flex-row">
 						<div class="fcol-xs-auto sc-label align-center">
@@ -76,29 +87,29 @@
 						</div>
 					</div>
 				</li>
-				<li ng-repeat="categoria in indexCtrl.categoriasCtrl.list track by $index">
+				<li ng-repeat="categoria in indexCtrl.categoriasCtrl.list track by $index" ng-init="indexCtrl.categoriasCtrl.init(categoria)">
 					<div class="flex-row sc-p-xs sc-accordion-head">
-						<div ng-if="!categoria.edit" class="sc-text-bold sc-text-gray-dark">{{categoria.label}}</div>
-						<div class="sc-input-group sc-text-sm fcol-xs-50" ng-if="categoria.edit">
+						<div ng-if="!categoria.edit.opened" class="sc-text-bold sc-text-gray-dark">{{categoria.nome}}</div>
+						<div class="sc-input-group sc-text-sm fcol-xs-50" ng-if="categoria.edit.opened">
 							<input class="sc-input-default sc-text-lg" ng-model="indexCtrl.categoriasCtrl.novaCategoria">
 							<button class="sc-btn sc-btn-green sc-text-lg" ng-click="indexCtrl.categoriasCtrl.salvar(categoria)"><i class="sc-icon sc-icon-visto-1"></i></button>
 							<button class="sc-btn sc-btn-red sc-text-lg" ng-click="indexCtrl.categoriasCtrl.editar(categoria)"><i class="sc-icon sc-icon-fechar-1"></i></button>
 						</div>
-						<div ng-if="categoria.disabled && !categoria.edit">
+						<div ng-if="categoria.desativada && !categoria.edit.opened">
 							<span class="sc-border-radius sc-text-sm sc-p-v-xs sc-text-white sc-m-h-lg sc-p-h-lg sc-bg-yellow">Desativada!</span>
 						</div>
 						<div class="fcol-xs-auto"></div>
 						<div class="right align-self-center">
 							<div class="sc-dropdown">
-								<i class="sc-icon sc-icon-reticiencias-v sc-badge-hover-gray" ng-class="{'sc-badge-active': categoria.menu.opened}" ng-click="indexCtrl.categoriasCtrl.showMenu(categoria)"></i>
-								<div class="sc-dropdown-menu pull-right" ng-if="categoria.menuIsShown" style="display: block;">
+								<i class="sc-icon sc-icon-reticiencias-v sc-badge-hover-gray" ng-class="{'sc-badge-active': categoria.menu.opened}" ng-click="categoria.menu.toggle()"></i>
+								<div class="sc-dropdown-menu pull-right" ng-if="categoria.menu.opened" style="display: block;">
 									<ul>
 										<li ng-click="indexCtrl.categoriasCtrl.editar(categoria)">
 											<span>Editar</span>
 										</li>
 										<li ng-click="indexCtrl.categoriasCtrl.desativar(categoria)">
-											<span ng-if="categoria.disabled">Reativar</span>
-											<span ng-if="!categoria.disabled">Desativar</span>
+											<span ng-if="categoria.desativada">Reativar</span>
+											<span ng-if="!categoria.desativada">Desativar</span>
 										</li>
 										<li ng-click="indexCtrl.categoriasCtrl.rmv(categoria)">
 											<span>Excluir</span>

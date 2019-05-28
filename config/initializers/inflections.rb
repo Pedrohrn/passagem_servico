@@ -14,3 +14,9 @@
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym 'RESTful'
 # end
+ActiveSupport::Inflector.inflections do |inflect|
+	inflect.irregular 'perfil', 'perfis'
+	inflect.irregular 'categoria', 'categorias'
+	inflect.irregular 'objeto', 'objetos'
+	inflect.irregular 'item', 'itens'
+end

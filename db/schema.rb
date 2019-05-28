@@ -10,23 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_22_142500) do
+ActiveRecord::Schema.define(version: 2019_05_27_210824) do
 
-  create_table "itens", force: :cascade do |t|
+  create_table "categorias", force: :cascade do |t|
+    t.string "nome"
+    t.boolean "desativada", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "objetos", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.index ["nome"], name: "index_categorias_on_nome"
   end
 
   create_table "passagem_servicos", force: :cascade do |t|
     t.string "status", null: false
     t.integer "pessoa_saiu_id", null: false
     t.integer "pessoa_entrou_id", null: false
-    t.date "data", null: false
+    t.date "data"
     t.text "observacoes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -34,16 +32,6 @@ ActiveRecord::Schema.define(version: 2019_05_22_142500) do
     t.index ["pessoa_entrou_id"], name: "index_passagem_servicos_on_pessoa_entrou_id"
     t.index ["pessoa_saiu_id"], name: "index_passagem_servicos_on_pessoa_saiu_id"
     t.index ["status"], name: "index_passagem_servicos_on_status"
-  end
-
-  create_table "passagems", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "perfis", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "pessoas", force: :cascade do |t|

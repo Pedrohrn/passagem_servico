@@ -1,11 +1,11 @@
-<div ng-controller="PassagemServicos::FormCtrl as formCtrl" ng-init="formCtrl.init(passagem, listCtrl, itemCtrl, formularioCtrl)">
-	<form class="sc-m-h-md sc-p-t-sm">
+<div ng-controller="PassagemServicos::FormCtrl as formCtrl" ng-init="formCtrl.init(passagem)">
+	<form class="sc-m-h-md sc-p-t-sm" ng-submit="formCtrl.submit()">
 		<div class="sc-fieldset flex-row">
 			<div class="col-xs-12 col-md-6 sc-p-h-xs">
 				<div class="col-xs-10 col-md-7 col-sm-6 sc-p-b-sm">
 					<div class="s sc-label">Quem sai:</div>
 					<div>
-						<select class="col-xs-12 sc-input-default" ng-options="porteiro as porteiro.nome disable when 'porteiro.id == formCtrl.params.pessoa_entrou.id' for porteiro in porteirosCtrl.list track by porteiro.id" ng-model="formCtrl.params.pessoa_saiu"></select>
+						<select class="col-xs-12 sc-input-default" ng-options="porteiro as porteiro.nome for porteiro in indexCtrl.porteirosCtrl.list track by porteiro.id" ng-model="formCtrl.params.pessoa_saiu"></select>
 					</div>
 				</div>
 				<div class="col-xs-5 col-md-4 col-lg-4 col-sm-5">
@@ -19,7 +19,7 @@
 				<div class="col-xs-10 col-md-7 col-sm-6 sc-p-b-sm">
 					<div class="sc-label">Quem entra:</div>
 					<div>
-						<select class="col-xs-12 sc-input-default" ng-options="porteiro as porteiro.nome disable when 'porteiro.id == formCtrl.params.pessoa_saiu.id' for porteiro in porteirosCtrl.list track by porteiro.id" ng-model="formCtrl.params.pessoa_entrou"></select>
+						<select class="col-xs-12 sc-input-default" ng-options="porteiro as porteiro.nome for porteiro in indexCtrl.porteirosCtrl.list track by porteiro.id" ng-model="formCtrl.params.pessoa_entrou"></select>
 					</div>
 				</div>
 				<div class="col-xs-5 col-md-4 col-lg-4 col-sm-5">
@@ -29,7 +29,6 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="col-xs-12 sc-p-lg" ng-if="formCtrl.params.pessoa_entrou || formCtrl.params.pessoa_saiu">
 				<div class="sc-text-black">
 					<span>Eu, <b>{{formCtrl.params.pessoa_saiu.nome}}</b>, passo o posto de serviço para o(a) <b>{{formCtrl.params.pessoa_entrou.nome}}</b>, de acordo com as informações abaixo:</span>
@@ -74,8 +73,8 @@
 						</ul>
 					</div>
 					<div ng-if="categoria.edit || categoria.new" class="sc-input-group">
-						<input class="sc-input-default" ng-model="categoria.label">
-						<button class="sc-btn sc-btn-green" ng-click="indexCtrl.categoriasCtrl.salvarCategoria()"><i class="sc-icon sc-icon-visto-1"></i></button>
+						<input class="sc-input-default" ng-model="categoria.nome">
+						<button class="sc-btn sc-btn-green" ng-click="indexCtrl.categoriasCtrl.salvar_categoria()"><i class="sc-icon sc-icon-visto-1"></i></button>
 						<button class="sc-btn sc-btn-red" ng-click="indexCtrl.categoriasCtrl.cancelarCadastro()"><i class="sc-icon sc-icon-fechar-1"></i></button>
 					</div>
 					<div class="fcol-xs-auto">
@@ -120,8 +119,15 @@
 			</div>
 		</div>
 		<div class="align-right">
-			<button class="sc-btn sc-btn-green sc-btn-block-only-xs sc-m-sm" ng-click="formCtrl.formCtrl.salvarEPassar(passagem)">Salvar e passar</button>
-			<button class="sc-btn sc-btn-blue sc-btn-block-only-xs sc-m-sm" ng-click="formCtrl.formCtrl.salvar(passagem)">Salvar</button>
+			<button class="sc-btn sc-btn-green sc-btn-block-only-xs sc-m-sm" type="submit">
+				<span ng-if="!updateRecords">Salvar e passar</span>
+				<span ng-if="updateRecords"><i class="sc-icon sc-icon-carregando-1 sc-icon-spin"></i>Salvando
+			</button>
+			<button class="sc-btn sc-btn-blue sc-btn-block-only-xs sc-m-sm" type="submit">
+				<span ng-if="!updateRecords">Salvar</span>
+				<span ng-if="updateRecords"><i class="sc-icon sc-icon-carregando-1 sc-icon-spin"></i>Salvando
+				</span>
+			</button>
 			<button class="sc-btn sc-btn-red sc-btn-block-only-xs sc-m-sm" ng-click="indexCtrl.formCtrl.cancelar(passagem)">Cancelar</button>
 		</div>
 	</form>

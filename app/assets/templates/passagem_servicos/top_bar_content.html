@@ -7,8 +7,8 @@
 		<form class="sc-input-group">
 			<input class="sc-input sc-input-default" ng-model="indexCtrl.filtroCtrl.params.q" type="text">
 			<button class="sc-btn sc-btn-blue" ng-click="indexCtrl.filtroCtrl.exec()">
-				<i class="sc-icon sc-icon-lupa-1" ng-if="!indexCtrl.filtroCtrl.params.loading"></i>
-				<i class="sc-icon sc-icon-carregando-1 sc-icon-spin" ng-if="filter.loading"></i>
+				<i class="sc-icon sc-icon-lupa-1" ng-if="!indexCtrl.filtroCtrl.loading"></i>
+				<i class="sc-icon sc-icon-carregando-1 sc-icon-spin" ng-if="indexCtrl.filtroCtrl.loading"></i>
 			</button>
 			<button class="sc-btn sc-btn-blue" ng-class="{'sc-btn-gray': indexCtrl.filtroCtrl.filtroAvancado}" ng-click="indexCtrl.filtroCtrl.showFilter()"><i class="sc-icon sc-icon-filtro-2"></i></button>
 			<button class="sc-btn sc-btn-blue" ng-click="makePdf()"><i class="sc-icon sc-icon-impressora"></i></button>
@@ -34,7 +34,7 @@
 		<div class="col-xs-12 col-sm-4 col-md-3 sc-p-t-sm">
 			<label class="sc-label">Saiu:</label>
 			<div>
-				<select class="sc-input-default col-xs-12" ng-options="porteiro as porteiro.nome for porteiro in indexCtrl.porteiroCtrl.list" ng-model="indexCtrl.filtroCtrl.params.quemSai"></select>
+				<select class="sc-input-default col-xs-12" ng-options="porteiro as porteiro.nome for porteiro in indexCtrl.porteirosCtrl.list" ng-model="indexCtrl.filtroCtrl.params.quemSai"></select>
 			</div>
 		</div>
 		<div class="col-xs-12 col-sm-4 col-md-3 sc-p-t-sm">

@@ -26,8 +26,12 @@ angular.module('scApp').lazy
 			exec: ->
 				vm.listCtrl.loadList()
 
+		vm.porteirosCtrl =
+			list: []
+
 		vm.listCtrl =
 			list: []
+
 			#pagination: new scPagination
 
 			reset: ->
@@ -53,6 +57,8 @@ angular.module('scApp').lazy
 						# success
 						@loading = false
 						@list.addOrExtend item for item in data.list
+						vm.porteirosCtrl.list.addOrExtend item for item in data.pessoas
+						vm.categoriasCtrl.list.addOrExtend item for item in data.categorias
 					(response)=>
 						# error
 						@loading = false

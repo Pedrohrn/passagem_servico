@@ -7,7 +7,7 @@ class CreatePassagemServicos < ActiveRecord::Migration[5.2]
     	t.integer :pessoa_saiu_id,   null: false
     	t.integer :pessoa_entrou_id, null: false
 
-    	t.date :data, null: false
+    	t.date :data
 
     	t.text :observacoes
 

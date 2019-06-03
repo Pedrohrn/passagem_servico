@@ -1,12 +1,13 @@
 class PassagemServico < ApplicationRecord
-	validates_presence_of :pessoa_entrou_id
-	validates_presence_of :pessoa_saiu_id
+	validates_presence_of :pessoa_entrou_id, message: "Selecione a pessoa que está entrando!"
+	validates_presence_of :pessoa_saiu_id, message: "Selecione a pessoa que está saindo!"
 	validates_presence_of :status
 
 	belongs_to :pessoa_saiu, class_name: 'Pessoa'
 	belongs_to :pessoa_entrou, class_name: 'Pessoa'
+	has_many :objetos
 
-	before_validation :set_status
+	accepts_nested_attributes_for :objetos
 
 	scope :buscar, lambda { |params|
 		filtro = (params[:filtro] || {}).deep_symbolize_keys
@@ -29,9 +30,11 @@ class PassagemServico < ApplicationRecord
 			id: id,
 			pessoa_saiu: pessoa_obj(pessoa_saiu),
 			pessoa_entrou: pessoa_obj(pessoa_entrou),
-			data: data,
+			data: created_at,
 			status: status,
 			observacoes: observacoes,
+			objetos: objetos_obj,
+			perfil: perfil_obj,
 		}
 	end
 
@@ -47,11 +50,16 @@ class PassagemServico < ApplicationRecord
 		}
 	end
 
+	def objetos_obj
+		objetos.map(&:to_frontend_obj)
+	end
+
+	def perfil_obj
+		{
+			id: perfil_id,
+		}
+	end
+
 	private
 
-	def set_status
-		self.status = 'Pendente'
-
-		nil
-	end
 end

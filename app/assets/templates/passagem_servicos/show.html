@@ -8,10 +8,10 @@
 				<span class="sc-text-blue">{{passagem.pessoa_entrou.nome}}</span>
 			</div>
 			<div class="sc-text-gray sc-p-b-sm">Cadastrado em:
-				<span class="sc-text-blue">{{passagem.data_cadastro | date: "dd/MM/yyyy" }}, às {{passagem.data_passagem | date: 'mediumTime' }}</span>
+				<span class="sc-text-blue">{{passagem.data | date: "dd/MM/yyyy" }}, às {{passagem.data | date: 'mediumTime' }}</span>
 			</div>
-			<div class="sc-text-gray sc-p-b-sm" ng-if="passagem.status.label == 'Realizada'">Passagem realizada em:
-				<span class="sc-text-blue">{{passagem.data_passagem | date: "dd/MM/yyyy" }}, às {{passagem.data_passagem | date: 'mediumTime' }}</span>
+			<div class="sc-text-gray sc-p-b-sm" ng-if="passagem.status.label == 'corrigir'">Passagem realizada em:
+				<span class="sc-text-blue">{{passagem.data | date: "dd/MM/yyyy" }}, às {{passagem.data | date: 'mediumTime' }}</span>
 			</div>
 			<div class="sc-text-gray" ng-if="passagem.notificacoes.length > 0">
 				<span>
@@ -42,7 +42,7 @@
 			<thead>
 				<tr>
 					<th>
-						<div class="sc-text-blue sc-text-bold">{{objeto.categoria.label}}</div>
+						<div class="sc-text-blue sc-text-bold">{{objeto.categoria.nome}}</div>
 					</th>
 				</tr>
 			</thead>
@@ -51,7 +51,7 @@
 					<td class="sc-text-bold sc-text-gray">Nome</td>
 					<td class="sc-text-bold sc-text-gray align-right">Qtd</td>
 				</tr>
-				<tr ng-repeat="item in objeto.itens track by $index">
+				<tr ng-repeat="item in objeto.items track by $index">
 					<td class="sc-text-black">{{item.label}}</td>
 					<td class="sc-text-black align-right">{{item.qtd}}</td>
 				</tr>

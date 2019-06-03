@@ -22,7 +22,7 @@
 				<li ng-click="indexCtrl.perfilCtrl.modalToggle()">
 					<span>Perfis de passagem</span>
 				</li>
-				<li ng-click="perfilCtrl.showLog()">
+				<li ng-click="indexCtrl.logCtrl.modalToggle()">
 					<span>Histórico</span>
 				</li>
 			</ul>
@@ -67,9 +67,7 @@
 		</div>
 		<div class="col-xs-12 col-sm-4 col-md-3 sc-p-t-sm">
 			<label class="sc-label">Tipo de data:</label>
-			<select class="sc-input-default col-xs-12" ng-model="indexCtrl.filtroCtrl.params.tipo_data">
-				<option value="passada_em">Passada em</option>
-				<option value="cadastrada_em">Cadastrada em</option>
+			<select class="sc-input-default col-xs-12" ng-options="acao as acao.label for acao in indexCtrl.filtroCtrl.acoes_list track by acao.id" ng-model="indexCtrl.filtroCtrl.params.tipo_data" ng-value="acao.key">
 			</select>
 		</div>
 		<div class="clear"></div>

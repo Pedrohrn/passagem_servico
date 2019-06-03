@@ -50,13 +50,13 @@
 						<i class="sc-icon sc-text-green sc-icon-seta-8-cima hidden-xs sc-p-r-md" ng-class="{'sc-text-white': passagem.edit.opened || passagem.acc.opened}"></i>
 						<div class="sc-text-bold sc-ellpisis-inline">{{passagem.pessoa_entrou.nome}}</div>
 					</div>
-					<div class="fcol-xs-7em sc-p-sm align-center fcol-order-3 sc-text-bold">{{passagem.data_passagem | date: "dd/MM/yyyy" }}</div>
+					<div class="fcol-xs-7em sc-p-sm align-center fcol-order-3 sc-text-bold">{{passagem.data | date: "dd/MM/yyyy" }}</div>
 					<div class="fcol-xs-7em sc-p-sm fcol-order-4 visible-xs"></div>
 					<div class="fcol-xs-3em align-center sc-p-sm fcol-order-5" ng-click="passagem.menu.toggle()" sc-stop-click>
 						<div class="sc-dropdown">
 							<i class="sc-icon sc-icon-reticiencias-v sc-badge-hover-gray" ng-class="{'sc-text-white': passagem.acc.opened || passagem.edit.opened , 'sc-badge-hover-white': passagem.acc.opened || passagem.edit.opened , 'sc-badge-active': passagem.menu.opened }"></i>
 							<ul class="sc-dropdown-menu ng-animation-slider pull-right" ng-if="passagem.menu.opened" style="display: block;">
-								<li ng-if="passagem.status.label != 'Realizada'" ng-click="indexCtrl.itemCtrl.passarServico(passagem)">
+								<li ng-if="passagem.status.label != 'Realizada'" ng-click="indexCtrl.itemCtrl.toggleModalPassarServico(passagem)">
 									<span>Passar serviço</span>
 								</li>
 								<li ng-click="indexCtrl.itemCtrl.editar(passagem)">
@@ -72,7 +72,7 @@
 									<span ng-if="passagem.disabled">Reativar</span>
 									<span ng-if="!passagem.disabled">Desativar</span>
 								</li>
-								<li ng-click="indexCtrl.itemCtrl.showLog(passagem)">
+								<li ng-click="passagem.log.toggle()">
 									<span>Histórico</span>
 								</li>
 							</ul>
@@ -85,6 +85,11 @@
 				<div ng-if="passagem.acc.opened" class="sc-accordion-body">
 					<div ng-include="indexCtrl.templates.passagem_servicos.show"></div>
 				</div>
+
+				<!-- Modal de passagem de serviço e log -->
+				<div ng-include="indexCtrl.templates.passagem_servicos.passar_servico_modal" ng-if="passagem.passarServico.active"></div>
+				<div ng-include="indexCtrl.templates.passagem_servicos.passagem_log_modal" ng-if="passagem.log.active"></div>
+
 			</li>
 			<li class="sc-accordion" ng-if="!indexCtrl.listCtrl.list.any() || indexCtrl.filtroCtrl.loading">
 				<div class="sc-accordion-head sc-bg-white">
@@ -104,4 +109,5 @@
 	</section>
 
 	<div ng-include="indexCtrl.templates.passagem_servicos.perfil_modal" ng-if="indexCtrl.perfilCtrl.modal.active"></div>
+	<div ng-include="indexCtrl.templates.passagem_servicos.passagens_log_modal" ng-if="indexCtrl.logCtrl.modal.active"></div>
 </div>

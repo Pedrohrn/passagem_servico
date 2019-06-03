@@ -1,5 +1,5 @@
 <div ng-controller="PassagemServicos::FormCtrl as formCtrl" ng-init="formCtrl.init(passagem)">
-	<form class="sc-m-h-md sc-p-t-sm" ng-submit="formCtrl.submit()">
+	<form class="sc-m-h-md sc-p-t-sm" ng-submit="formCtrl.submit(passagem)">
 		<div class="sc-fieldset flex-row">
 			<div class="col-xs-12 col-md-6 sc-p-h-xs">
 				<div class="col-xs-10 col-md-7 col-sm-6 sc-p-b-sm">
@@ -46,9 +46,9 @@
 		<div class="sc-fieldset">
 			<div class="sc-fieldset-head flex-row">
 				<div class="sc-text-xl sc-label">Objetos</div>
-				<button class="sc-btn align-self-center sc-btn-green sc-btn-thin sc-btn-sm hidden-xs sc-m-h-lg" ng-click="formCtrl.objetosCtrl.addObjeto()">Adicionar Objeto</button>
+				<button class="sc-btn align-self-center sc-btn-green sc-btn-thin sc-btn-sm hidden-xs sc-m-h-lg" type="button" ng-click="formCtrl.objetosCtrl.addObjeto()">Adicionar Objeto</button>
 				<i class="sc-icon sc-icon-mais-1 sc-badge-hover-green visible-xs sc-m-h-lg" ng-click="formCtrl.objetosCtrl.addObjeto()"></i>
-				<button ng-if="formCtrl.params.objetos.length > 0" class="sc-btn align-self-center sc-btn-red sc-btn-thin sc-btn-sm hidden-xs sc-p-h-lg" ng-click="formCtrl.formCtrl.limparForm()">Limpar formulário</button>
+				<button ng-if="formCtrl.params.objetos.length > 0" class="sc-btn align-self-center sc-btn-red sc-btn-thin sc-btn-sm hidden-xs sc-p-h-lg" type="button" ng-click="formCtrl.formCtrl.limparForm()">Limpar formulário</button>
 				<i ng-if="formCtrl.params.objetos.length > 0" class="sc-icon sc-icon-lixeira-2 sc-badge-hover-red visible-xs" ng-click="formCtrl.formCtrl.limparForm()"></i>
 			</div>
 			<div ng-repeat="objeto in formCtrl.params.objetos track by $index" class="sc-fieldset sc-m-h-md flex-row sc-text-sm-xs">
@@ -57,7 +57,7 @@
 						<select class="sc-input sc-input-default" ng-options="categoria as categoria.nome disable when categoria.desativada for categoria in indexCtrl.categoriasCtrl.list track by categoria.id" ng-model="objeto.categoria" ng-change="formCtrl.objetosCtrl.setCategoria(objeto)">
 							<option value="">Selecione ou cadastre</option>
 						</select>
-						<button class="sc-btn sc-btn-default sc-dropdown">
+						<button type="button" class="sc-btn sc-btn-default sc-dropdown">
 							<i class="sc-icon sc-icon-reticiencias-v" ng-click="categoria.toggleToolbar()"></i>
 						</button>
 						<ul class="sc-dropdown-menu" ng-show="categoria.menuIsOpen">
@@ -74,8 +74,8 @@
 					</div>
 					<div ng-if="categoria.edit || categoria.new" class="sc-input-group">
 						<input class="sc-input-default" ng-model="categoria.nome">
-						<button class="sc-btn sc-btn-green" ng-click="indexCtrl.categoriasCtrl.salvar_categoria()"><i class="sc-icon sc-icon-visto-1"></i></button>
-						<button class="sc-btn sc-btn-red" ng-click="indexCtrl.categoriasCtrl.cancelarCadastro()"><i class="sc-icon sc-icon-fechar-1"></i></button>
+						<button class="sc-btn sc-btn-green" type="button" ng-click="indexCtrl.categoriasCtrl.salvar_categoria()"><i class="sc-icon sc-icon-visto-1"></i></button>
+						<button class="sc-btn sc-btn-red" type="button" ng-click="indexCtrl.categoriasCtrl.cancelarCadastro()"><i class="sc-icon sc-icon-fechar-1"></i></button>
 					</div>
 					<div class="fcol-xs-auto">
 						<i class="sc-icon sc-icon-mais-1 sc-badge-hover-green sc-m-h-lg" ng-click="formCtrl.objetosCtrl.addItem(objeto)"></i>
@@ -84,7 +84,7 @@
 				</div>
 				<div class="col-xs-12">
 					<ul>
-						<li ng-if="objeto.itens.length > 0">
+						<li ng-if="objeto.items.length > 0">
 							<div class="flex-row">
 								<div class="fcol-xs-15 fcol-sm-5em">
 									<span class="sc-label">Qtd</span>
@@ -94,7 +94,7 @@
 								</div>
 							</div>
 						</li>
-						<li ng-repeat="item in objeto.itens track by $index" class="sc-p-t-md">
+						<li ng-repeat="item in objeto.items track by $index" class="sc-p-t-md">
 							<div class="flex-row">
 								<div class="fcol-xs-15 fcol-sm-5em">
 									<input class="sc-input sc-input-default sc-input-thin col-xs-12" ng-model="item.qtd" type="number" max="999" min="0" step="1">
@@ -119,16 +119,16 @@
 			</div>
 		</div>
 		<div class="align-right">
-			<button class="sc-btn sc-btn-green sc-btn-block-only-xs sc-m-sm" type="submit">
+			<button ng-if="passagem.status.label != 'Realizada'" class="sc-btn sc-btn-green sc-btn-block-only-xs sc-m-sm" ng-click="formCtrl.formCtrl.salvar_e_passar()">
 				<span ng-if="!updateRecords">Salvar e passar</span>
 				<span ng-if="updateRecords"><i class="sc-icon sc-icon-carregando-1 sc-icon-spin"></i>Salvando
 			</button>
-			<button class="sc-btn sc-btn-blue sc-btn-block-only-xs sc-m-sm" type="submit">
+			<button class="sc-btn sc-btn-blue sc-btn-block-only-xs sc-m-sm" ng-click="formCtrl.formCtrl.salvar()">
 				<span ng-if="!updateRecords">Salvar</span>
 				<span ng-if="updateRecords"><i class="sc-icon sc-icon-carregando-1 sc-icon-spin"></i>Salvando
 				</span>
 			</button>
-			<button class="sc-btn sc-btn-red sc-btn-block-only-xs sc-m-sm" ng-click="indexCtrl.formCtrl.cancelar(passagem)">Cancelar</button>
+			<button class="sc-btn sc-btn-red sc-btn-block-only-xs sc-m-sm" type="button" ng-click="indexCtrl.formCtrl.cancelar(passagem)">Cancelar</button>
 		</div>
 	</form>
 </div>

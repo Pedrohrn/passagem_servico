@@ -1,5 +1,5 @@
-<div class="sc-fieldset sc-bg-white col-xs-12" ng-init="perfil = indexCtrl.perfilCtrl.params">
-	<form>
+<div class="sc-fieldset sc-bg-white col-xs-12" ng-init="indexCtrl.perfilCtrl.formInit(perfil)">
+	<form ng-submit="indexCtrl.perfilCtrl.submit()">
 		<div class="col-xs-6 sc-p-h-none">
 			<div class="sc-label">Título do perfil:</div>
 			<div>
@@ -11,18 +11,18 @@
 		<div class="sc-fieldset">
 			<div class="sc-fieldset-head flex-row">
 				<div class="sc-label sc-text-lg align-self-center">Objetos</div>
-				<button class="sc-btn sc-btn-green sc-btn-thin sc-btn-sm align-self-center hidden-xs sc-m-h-lg" ng-click="indexCtrl.perfilCtrl.addObjeto()">Adicionar objeto</button>
-				<button class="sc-btn sc-btn-red sc-btn-thin sc-btn-sm align-self-center hidden-xs" ng-if="indexCtrl.perfilCtrl.params.objetos.length > 0" ng-click="indexCtrl.perfilCtrl.limparFormulario()">Limpar formulário</button>
+				<button class="sc-btn sc-btn-green sc-btn-thin sc-btn-sm align-self-center hidden-xs sc-m-h-lg" type="button" ng-click="indexCtrl.perfilCtrl.addObjeto()">Adicionar objeto</button>
+				<button class="sc-btn sc-btn-red sc-btn-thin sc-btn-sm align-self-center hidden-xs" type="button" ng-if="indexCtrl.perfilCtrl.params.objetos.length > 0" ng-click="indexCtrl.perfilCtrl.limparFormulario()">Limpar formulário</button>
 				<i class="sc-icon sc-icon-mais-1 sc-badge-hover-green visible-xs" ng-click="indexCtrl.perfilCtrl.addObjeto()"></i>
 				<i class="sc-icon sc-icon-lixeira-1 sc-badge-hover-red visible-xs" ng-if="indexCtrl.perfilCtrl.params.objetos > 0" ng-click="indexCtrl.perfilCtrl.limparFormulario()"></i>
 			</div>
 			<div class="sc-fieldset sc-m-lg" ng-repeat="objeto in indexCtrl.perfilCtrl.params.objetos track by $index">
 				<div class="sc-fieldset-head flex-row">
-					<div class="sc-input-group fcol-xs-50 fcol-sm-40 sc-text-sm" ng-if="!objeto.edit && !indexCtrl.categoriasCtrl.newCategoria">
-						<select required="required" class="sc-input sc-input-default" ng-options="categoria as categoria.label disable when categoria.disabled for categoria in indexCtrl.categoriasCtrl.list track by categoria.id" ng-model="objeto.categoria" ng-init="objeto.categoria = indexCtrl.categoriasCtrl.list[1]" >
+					<div class="sc-input-group fcol-xs-50 fcol-sm-40 sc-text-sm" ng-if="!objeto.edit.opened">
+						<select class="sc-input sc-input-default" ng-options="categoria as categoria.nome disable when categoria.disabled for categoria in indexCtrl.categoriasCtrl.list track by categoria.id" ng-model="objeto.categoria">
 							<option value="" selected>Selecione ou cadastre</option>
 						</select>
-						<button class="sc-btn sc-btn-default" ng-click="indexCtrl.categoriasCtrl.toggleToolbar(objeto)">
+						<button type="button" class="sc-btn sc-btn-default" ng-click="indexCtrl.categoriasCtrl.toggleToolbar(objeto)">
 							<div class="sc-dropdown">
 								<i class="sc-icon sc-icon-reticiencias-v"></i>
 								<ul class="sc-dropdown-menu pull-right sc-stop-click" ng-show="objeto.toolbarIsShown">
@@ -39,10 +39,10 @@
 							</div>
 						</button>
 					</div>
-					<div ng-if="objeto.edit || indexCtrl.categoriasCtrl.newCategoria" class="sc-input-group fcol-xs-50 sc-text-sm">
+					<div ng-if="objeto.edit.opened" class="sc-input-group fcol-xs-50 sc-text-sm">
 						<input class="sc-input-default" ng-model="indexCtrl.categoriasCtrl.new_categoria">
-						<button class="sc-btn sc-btn-green" ng-click="indexCtrl.categoriasCtrl.salvar()"><i class="sc-icon sc-icon-visto-1"></i></button>
-						<button class="sc-btn sc-btn-red" ng-click="indexCtrl.categoriasCtrl.editar(objeto, categoria)"><i class="sc-icon sc-icon-lixeira-1"></i></button>
+						<button class="sc-btn sc-btn-green" type="button" ng-click="indexCtrl.categoriasCtrl.salvar()"><i class="sc-icon sc-icon-visto-1"></i></button>
+						<button class="sc-btn sc-btn-red" type="button" ng-click="indexCtrl.categoriasCtrl.editar(objeto, categoria)"><i class="sc-icon sc-icon-lixeira-1"></i></button>
 					</div>
 					<i class="sc-icon sc-icon-mais-1 sc-badge-hover-green sc-m-h-md" ng-click=indexCtrl.perfilCtrl.addItem(objeto)></i>
 					<i class="sc-icon sc-icon-lixeira-1 sc-badge-hover-red" ng-click="indexCtrl.perfilCtrl.rmvObjeto(objeto)"></i>
@@ -59,7 +59,7 @@
 								</div>
 							</div>
 						</li>
-						<li ng-repeat="item in objeto.itens track by $index" class="sc-p-t-md">
+						<li ng-repeat="item in objeto.items track by $index" class="sc-p-t-md">
 							<div class="flex-row">
 								<div class="fcol-xs-15 fcol-sm-5em">
 									<input class="sc-input sc-input-default sc-input-thin col-xs-12" ng-model="item.qtd" type="number" max="999" min="0" step="1">
@@ -78,8 +78,8 @@
 			</div>
 		</div>
 		<div class="align-right">
-			<button class="sc-btn sc-btn-blue" ng-click="indexCtrl.perfilCtrl.salvarPerfil()">Salvar</button>
-			<button class="sc-btn sc-btn-default" ng-click="indexCtrl.perfilCtrl.cancelar(perfil)">Cancelar</button>
+			<button class="sc-btn sc-btn-blue" type="button" ng-click="indexCtrl.perfilCtrl.salvar(perfil)">Salvar</button>
+			<button class="sc-btn sc-btn-default" type="button" ng-click="indexCtrl.perfilCtrl.cancelar(perfil)">Cancelar</button>
 		</div>
 	</form>
 </div>

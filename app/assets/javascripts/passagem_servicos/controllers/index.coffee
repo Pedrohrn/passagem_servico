@@ -1,9 +1,10 @@
 angular.module('scApp').lazy
 .controller 'PassagemServicos::IndexCtrl', [
-	'$scModal', 'scAlert', 'scToggle', 'scTopMessages', 'Templates', 'PassagemServico', 'Categoria'
-	(scModal, scAlert, scToggle, scTopMessages, Templates, PassagemServico, Categoria)->
+	'$scModal', 'scAlert', 'scToggle', 'scTopMessages', 'Templates', 'PassagemServico', 'Categoria', 'Perfil'
+	(scModal, scAlert, scToggle, scTopMessages, Templates, PassagemServico, Categoria, Perfil)->
 		vm = this
 		vm.templates = Templates
+		vm.params = {}
 
 		vm.init = ->
 			vm.filtroCtrl.exec()
@@ -19,12 +20,18 @@ angular.module('scApp').lazy
 
 		vm.filtroCtrl =
 			fitroAvancado: false,
+			acoes_list: [
+				{ id: 1, label: 'Editada em', key: 'editou', color: 'cian' }
+				{ id: 2, label: 'Desativada em', key: 'desativou', color: 'yellow' }
+				{ id: 3, label: 'Criada em', key: 'criou', color: 'blue' }
+				{ id: 4, label: 'Passada em', key: 'passou', color: 'green' }
+			]
 
 			showFilter: ->
 				@filtroAvancado = !@filtroAvancado
 
 			exec: ->
-				vm.listCtrl.loadList()
+				vm.listCtrl.loadList() #Client.where(created_at: (Time.now.midnight - 1.day)..Time.now.midnight) - exemplo de um filtro por data
 
 		vm.porteirosCtrl =
 			list: []
@@ -59,6 +66,7 @@ angular.module('scApp').lazy
 						@list.addOrExtend item for item in data.list
 						vm.porteirosCtrl.list.addOrExtend item for item in data.pessoas
 						vm.categoriasCtrl.list.addOrExtend item for item in data.categorias
+						vm.perfilCtrl.list.addOrExtend item for item in data.perfis
 					(response)=>
 						# error
 						@loading = false
@@ -89,11 +97,15 @@ angular.module('scApp').lazy
 				passagem.menu = new scToggle()
 				passagem.edit = new scToggle()
 				passagem.acc = new scToggle()
-				passagem.modal = new scModal()
-				passagem.status = if passagem.status == 'Pendente' || 'pendente' then {color: 'yellow', label: 'Pendente'} else {color: 'green', label: 'Realizada'}
+				passagem.passarServico = new scModal()
+				passagem.log = new scModal()
+				passagem.status = if passagem.status == 'pendente' then {color: 'yellow', label: 'Pendente'} else if passagem.status == 'realizada' then {color: 'green', label: 'Realizada'} else {color: 'red', label: 'Desativada'}
+				console.log(passagem)
 
 			editar: (passagem)->
 				passagem.edit.open()
+				passagem = angular.copy(passagem)
+				vm.params = angular.copy(passagem)
 
 			accToggle: (passagem)->
 				passagem.acc.toggle() unless passagem.edit && passagem.edit.opened
@@ -117,6 +129,9 @@ angular.module('scApp').lazy
 						{ label: 'Cancelar', color: 'gray' }
 					]
 
+			toggleModalPassarServico: (passagem)->
+				passagem.passarServico.toggle()
+
 			disable: (passagem)->
 				label = if passagem.disabled then 'restaurar' else 'cancelar'
 
@@ -137,6 +152,19 @@ angular.module('scApp').lazy
 
 						},
 					],
+
+			modalPassagemInit: (passagem)->
+				pessoa_entrou: {}
+				observacoes: ''
+				vm.params = angular.copy(passagem)
+				console.log(vm.params)
+				@pessoa_entrou = angular.copy(vm.params.pessoa_entrou)
+				@observacoes = angular.copy(vm.params.observacoes)
+
+			passarServico: (passagem)->
+				vm.params.status = 'realizada'
+				PassagemServico.update(vm.params)
+
 
 		vm.topToolBar =
 			menuIsVisible: false,
@@ -161,9 +189,8 @@ angular.module('scApp').lazy
 
 		vm.categoriasCtrl =
 			list: [],
-			edit: false,
 			novaCategoria: {},
-			toolbarIsShown: false,
+			new_categoria: {},
 			new: false,
 
 			newCategoria: ->
@@ -191,16 +218,16 @@ angular.module('scApp').lazy
 					]
 
 			editar: (categoria)->
-				if categoria.edit || vm.categoriasCtrl.new
+				if categoria.edit.opened
 					scAlert.open
 						title: 'Deseja cancelar a edição?',
 						buttons: [
-						  { label: 'Sim', color: 'yellow', action: -> categoria.edit = false },
+						  { label: 'Sim', color: 'yellow', action: -> categoria.edit.toggle() },
 						  { label: 'Não', color: 'gray'}
 						]
 				else
-					categoria.edit = true
-					vm.categoriasCtrl.new_categoria = angular.copy(categoria.categoria.nome)
+					categoria.edit.toggle()
+					vm.categoriasCtrl.new_categoria = angular.copy(categoria)
 
 			rmv: (categoria)->
 				scAlert.open
@@ -213,63 +240,49 @@ angular.module('scApp').lazy
 						{ label: 'Cancelar', color: 'gray'}
 					]
 
-			salvar: ->
-				vm.categoriasCtrl.list.push
-					id: vm.categoriasCtrl.list.length+1
-					categoria: vm.categoriasCtrl.new_categoria
+			desativar: ->
+				Categoria.disable(categoria)
+
+			salvar: (categoria)->
+				Categoria.update(vm.categoriasCtrl.new_categoria)
+				setTimeout ->
+					alert 'teste'
+				, 2000
 
 			toggleToolbar: (objeto)->
 				objeto.toolbarIsShown = !objeto.toolbarIsShown
 
 			submit: ->
 				Categoria.create(vm.categoriasCtrl.novaCategoria)
-				console.log(vm.categoriasCtrl.novaCategoria)
+
+		vm.logCtrl =
+			list: [],
+			modal: new scModal(),
+			params: {},
+			acoes_list: [
+				{ id: 1, label: 'Editada em', key: 'editou', color: 'cian' }
+				{ id: 2, label: 'Desativada em', key: 'desativou', color: 'yellow' }
+				{ id: 3, label: 'Criada em', key: 'criou', color: 'blue' }
+				{ id: 4, label: 'Passada em', key: 'passou', color: 'green' }
+				{ id: 5, label: 'Apagada em', key: 'apagou', color: 'red' }
+			]
+
+			init: (item)->
+
+				item.acc = new scToggle()
+
+			buscar: ->
+				params = ({ id: @list.length+1, acao: vm.logCtrl.params.acao, data_inicio: vm.logCtrl.params.data_inicio, data_fim: vm.logCtrl.params.data_fim  })
+				#PassagemServico.buscar(params)
+
+			modalToggle: ->
+				@modal.open()
+
+			modalClose: ->
+				@modal.close()
 
 		vm.perfilCtrl =
-			list: [
-				{
-					id: 1,
-					nome: 'Perfil Teste',
-					objetos: [
-						{
-							categoria: { id: 1, label: 'Funcionamento'},
-							itens: [
-								{ qtd: 1, label: 'teste' },
-								{ qtd: 32, label: 'ui ui'}
-							]
-						},
-						{
-							categoria: { id: 2, label: 'Acontecimento'},
-							itens: [
-							  { qtd: 2, label: 'teste2' },
-							  { qtd: 3, label: 'teste 234'}
-							]
-						}
-					],
-					disabled: false,
-				},
-				{
-					id: 2,
-					nome: 'Perfil Teste 2',
-					objetos: [
-						{
-							categoria: { id: 1, label: 'Funcionamento'},
-							itens: [
-								{ qtd: 4, label: 'testessss' },
-								{ qtd: 33, label: 'uissss ui'}
-							]
-						},
-						{
-							categoria: { id: 2, label: 'Acontecimento'},
-							itens: [
-							  { qtd: 8, label: 'teste2sss' },
-							  { qtd: 9, label: 'testadase 234'}
-							]
-						}
-					],
-					disabled: false,
-				},
-			],
+			list: [],
 			modal: new scModal(),
 			viewPerfis: true,
 			viewCategorias: false,
@@ -282,6 +295,14 @@ angular.module('scApp').lazy
 
 			init: (perfil)->
 				perfil.edit = new scToggle()
+				console.log(perfil)
+
+			formInit: (perfil)->
+				@params = angular.copy perfil || {}
+				return unless @newPerfil
+				console.log(@params)
+				@params.objetos = []
+				console.log(@params)
 
 			novoPerfil: ->
 				if @newPerfil
@@ -297,8 +318,6 @@ angular.module('scApp').lazy
 					})
 				else
 					@newPerfil = true
-					@isCreating = true
-					@params = { objetos: []}
 
 			modalToggle: ->
 				@modal.open()
@@ -307,16 +326,17 @@ angular.module('scApp').lazy
 				@modal.close()
 
 			addObjeto: ->
-				vm.perfilCtrl.params.objetos.unshift(categoria: undefined, itens: [])
+				console.log(@params)
+				@params.objetos.unshift(categoria: undefined, items: [])
 
 			rmvObjeto: (objeto)->
-				vm.perfilCtrl.params.objetos.remove(objeto)
+				@params.objetos.remove(objeto)
 
 			addItem: (objetos)->
-				objetos.itens.unshift( label: '', qtd: undefined )
+				objetos.items.unshift( label: '', qtd: undefined )
 
 			rmvItem: (objeto, item)->
-				objeto.itens.remove(item)
+				objeto.items.remove(item)
 
 			editar: (perfil)->
 				if perfil.edit.opened
@@ -334,6 +354,17 @@ angular.module('scApp').lazy
 				@duplicata = true
 				@isCreating = true
 				vm.perfilCtrl.params = angular.copy(perfil)
+
+			salvar: (perfil)->
+				return vm.perfilCtrl.submit
+
+			submit: ->
+				console.log(@params)
+				console.log('oi')
+				if @newPerfil
+					Perfil.create(@params)
+				else
+					Perfil.update(@params)
 
 			cancelar: (perfil)->
 				if @newPerfil
@@ -374,7 +405,7 @@ angular.module('scApp').lazy
 				scAlert.open
 					title: 'Tem certeza que deseja limpar o formulário abaixo?',
 					buttons: [
-						{ label: 'Sim', color: 'yellow', action: -> vm.perfilCtrl.params.objetos = [] },
+						{ label: 'Sim', color: 'yellow', action: -> @params.objetos = [] },
 						{ label: 'Não', color: 'gray'}
 					]
 
@@ -396,5 +427,16 @@ angular.module('scApp').lazy
 				@viewCategorias = false
 				@viewPermissoes = false
 
+			salvar: ->
+				console.log(@params)
+				Perfil.create(@params)
+
+			rmv: (perfil)->
+				scAlert.open
+					title: 'Atenção! Deseja mesmo excluir o perfil?'
+					buttons: [
+						{ label: 'Sim', color: 'red', action: -> Perfil.destroy(perfil) },
+						{ label: 'Não', color: 'gray' }
+					]
 		vm
 ]

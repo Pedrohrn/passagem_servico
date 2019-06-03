@@ -7,21 +7,21 @@ angular.module('scApp').lazy
 
 		vm.new = false
 		vm.params = {}
-		vm.listCtrl = null
 		vm.passagem = null
-		vm.itemCtrl = null
-		vm.formularioCtrl = null
 
 		vm.init = (passagem)->
-			vm.passagem = passagem
+			vm.passagem = passagem || {}
 
-			vm.params = angular.copy(passagem || {});
-			vm.formCtrl.current_perfil = if Object.blank(passagem) then undefined else angular.copy(passagem.perfil)
+			vm.params =  angular.copy vm.passagem
+			console.log(vm.params)
+			vm.formCtrl.current_perfil = angular.copy vm.passagem.perfil
 
-			return unless Object.blank(vm.params)
+			vm.new = !vm.params.id;
+			return unless vm.new
+
 			vm.params.objetos = [];
-			vm.params.current_perfil = undefined;
-			vm.new = true;
+
+			console.log(vm.params)
 
 		vm.formCtrl =
 			setPerfil: ->
@@ -36,7 +36,8 @@ angular.module('scApp').lazy
 							label: 'Cancelar',
 							color: 'gray',
 							action: ->
-								vm.formCtrl.cancelar()						}
+								vm.formCtrl.cancelar()
+						}
 						{
 							label: 'Mesclar'
 							tooltip: 'Mescla os itens, por categoria, do formulário abaixo com os itens do perfil selecionado'
@@ -54,14 +55,21 @@ angular.module('scApp').lazy
 						}
 					]
 
+
 			cancelar: ->
 				vm.formCtrl.current_perfil = if Object.blank(vm.params.perfil) then {} else vm.params.perfil
 
 			salvar: ->
-				vm.formCtrl.params
+				vm.params.status = 'pendente'
+				if (vm.params.status == 'realizada')
+					vm.params.status = 'realizada'
+				else
+					vm.params.status = 'pendente'
+				return vm.submit
 
 			salvar_e_passar: ->
-				vm.formCtrl.params
+				vm.params.status = 'realizada'
+				return vm.submit
 
 			mesclarObjetos: ->
 				# garantindo objetos com categorias
@@ -75,7 +83,7 @@ angular.module('scApp').lazy
 				for perfilObjeto in vm.params.perfil.objetos
 					paramsObjeto = vm.params.objetos.find (el)-> el.categoria.id == perfilObjeto.categoria.id
 					if paramsObjeto
-						paramsObjeto.itens = paramsObjeto.itens.concat(perfilObjeto.itens)
+						paramsObjeto.items = paramsObjeto.items.concat(perfilObjeto.items)
 					else
 						vm.params.objetos.push(perfilObjeto)
 
@@ -109,20 +117,22 @@ angular.module('scApp').lazy
 				objeto.categoria = {}
 
 			addObjeto: ->
-				vm.params.objetos.unshift( categoria: undefined, itens: [], id: vm.params.objetos.length+1 )
+				vm.params.objetos.unshift( categoria: undefined, items: [] )
 
 			rmvObjeto: (objeto)->
 				vm.params.objetos.remove(objeto)
 
 			addItem: (objeto)->
-				objeto.itens.push( qtd: undefined, label: '' )
+				objeto.items.push( qtd: undefined, label: '' )
 
 			rmvItem: (objeto, item)->
-				objeto.itens.remove(item)
+				objeto.items.remove(item)
 
-		vm.submit = ->
-			PassagemServico.create(vm.params)
-			console.log(vm.params)
+		vm.submit = (passagem)->
+			if vm.new
+				PassagemServico.create(vm.params)
+			else if passagem.edit && passagem.edit.opened
+				PassagemServico.update(vm.params)
 
 		vm
 ]

@@ -23,5 +23,6 @@ angular.module('scApp').lazy
 
 			update:
 				method: 'PUT'
+				transformRequest: encapsulateData
 
 ]

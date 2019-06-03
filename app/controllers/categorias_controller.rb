@@ -8,7 +8,7 @@ class CategoriasController < ApplicationController
 				st, resp = service.index(get_params)
 
 				case st
-				when :sucess then render json: resp, status: :ok
+				when :success then render json: resp, status: :ok
 				end
 			}
 		end
@@ -20,7 +20,7 @@ class CategoriasController < ApplicationController
 				st, resp = service.show(get_params)
 
 				case st
-				when :sucess then render json: resp, status: :ok
+				when :success then render json: resp, status: :ok
 				end
 			}
 		end
@@ -30,7 +30,7 @@ class CategoriasController < ApplicationController
 		st, resp = service.create(categoria_params)
 
 		case st
-		when :sucess then render json: resp, status: :ok
+		when :success then render json: resp, status: :ok
 		when :error then render json: resp, status: :ok
 		end
 	end
@@ -41,15 +41,25 @@ class CategoriasController < ApplicationController
 		#st, resp = service.create(categoria_params)
 
 		#case st
-		#when :sucess then render json: resp, status: :ok
+		#when :success then render json: resp, status: :ok
 		#when :error then render json: resp, status: :ok
 		#end
+	end
+
+	def update
+		st, resp = service.update(categoria_params)
+
+		case st
+		when :success then render json: resp, status: :ok
+		when :error then render json: resp, status: :ok
+		end
+
 	end
 
 	private
 
 	def categoria_params
-		attrs = [:id, :nome]
+		attrs = [:id, :nome, :desativada]
 
 		resp = params.require(:categoria).permit(attrs).to_h
 		resp.deep_symbolize_keys

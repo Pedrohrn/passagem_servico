@@ -13,4 +13,7 @@ angular.module('scApp').lazy
 			destroy:
 				method: 'DELETE'
 
+			update:
+				method: 'PUT'
+
 ]

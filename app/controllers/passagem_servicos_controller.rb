@@ -38,22 +38,34 @@ class PassagemServicosController < ApplicationController
 	end
 
 	def destroy
-		passagem = PassagemServico.find(params[:id])
+		passagem = PassagemServico.find_by(id: params[:id])
 		passagem.destroy
 	end
 
-	def edit
-		passagem = PassagemServico.find(params[:id])
+	def update
+		st, resp = service.update(passagem_service_params)
+
+		case st
+		when :success then render json: resp, status: :ok
+		when :error then render json: resp, status: :ok
+		end
 	end
 
 	private
 
 	def passagem_service_params
-		attrs  = [:id, :observacoes]
+		attrs  = [:id, :observacoes, :status, :data]
 		attrs << { pessoa_saiu: [:id] }
 		attrs << { pessoa_entrou: [:id] }
+		attrs << { perfil: [:id] }
+		attrs << {
+			objetos: [
+				categoria: [:id], items: [:qtd, :label]
+			],
+		}
 
 		resp = params.require(:passagem_servico).permit(attrs).to_h
 		resp.deep_symbolize_keys
+
 	end
 end

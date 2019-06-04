@@ -10,13 +10,13 @@ class Perfil < ApplicationRecord
 		{
 			id: id,
 			nome: nome,
-			objetos: objetos_obj,
 			desativado: desativado,
 		}
 	end
 
 	def to_frontend_obj
 		attrs = slim_obj
+		attrs[:objetos] = objetos_obj
 		attrs
 	end
 

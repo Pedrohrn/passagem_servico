@@ -28,36 +28,22 @@ class PassagemServico < ApplicationRecord
 	def slim_obj
 		{
 			id: id,
-			pessoa_saiu: pessoa_obj(pessoa_saiu),
-			pessoa_entrou: pessoa_obj(pessoa_entrou),
+			pessoa_saiu: pessoa_saiu.to_frontend_obj,
+			pessoa_entrou: pessoa_entrou.to_frontend_obj,
 			data: created_at,
 			status: status,
-			observacoes: observacoes,
-			objetos: objetos_obj,
-			perfil: perfil_obj,
 		}
 	end
 
 	def to_frontend_obj
 		attrs = slim_obj
+		attrs[:objetos] = objetos_obj
+		attrs[:observacoes] = observacoes
 		attrs
-	end
-
-	def pessoa_obj(pessoa)
-		{
-			id: pessoa.id,
-			nome: pessoa.nome,
-		}
 	end
 
 	def objetos_obj
 		objetos.map(&:to_frontend_obj)
-	end
-
-	def perfil_obj
-		{
-			id: perfil_id,
-		}
 	end
 
 	private

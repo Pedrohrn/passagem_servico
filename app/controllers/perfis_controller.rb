@@ -2,15 +2,10 @@ class PerfisController < ApplicationController
 	def service() ::PerfisService; end
 
 	def index
-		respond_to do |format|
-			format.html{}
-			format.json {
-				st, resp = service.index(get_params)
+		st, resp = service.index(get_params)
 
-				case st
-				when :success then render json: resp, status: :ok
-				end
-			}
+		case st
+		when :success then render json: resp, status: :ok
 		end
 	end
 

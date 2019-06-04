@@ -4,7 +4,13 @@ class PassagemServicosService
 	def self.index(params)
 		list = model.buscar(params).map(&:slim_obj)
 
-		[:success, { list: list, pessoas: Pessoa.all.limit(15), categorias: Categoria.all, perfis: Perfil.all }] #aqui é onde se obtém as listas de pessoas e categorias
+		resp = { list: list }
+
+		resp[:perfis] = Perfil.all.map(&:to_frontend_obj)
+		resp[:pessoas] = Pessoa.all.limit(15).map(&:slim_obj)
+		resp[:categorias] = Categoria.all.map(&:slim_obj)
+
+		[:success, resp]
 	end
 
 	def self.show(params)
